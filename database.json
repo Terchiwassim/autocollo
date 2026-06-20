@@ -1,0 +1,26 @@
+{
+    "users": [
+        {
+            "name": "FARES",
+            "email": "Nedjmafares@gmail.com",
+            "password": "fares",
+            "transaction_id": "23123",
+            "status": "active"
+        },
+        {
+            "name": "test",
+            "email": "test@mail.com",
+            "password": "123",
+            "transaction_id": "321",
+            "status": "active"
+        },
+        {
+            "name": "test2",
+            "email": "test2@mail.com",
+            "password": "123",
+            "transaction_id": "1234",
+            "status": "pending"
+        }
+    ],
+    "orders": []
+}

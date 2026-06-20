@@ -1,0 +1,498 @@
+/* --- إعدادات احترافية عامة وتصفير المسافات واستيراد الخط الفخم --- */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+
+:root {
+    --bg-main: #090d16;
+    --bg-card: rgba(30, 41, 59, 0.45);
+    --border-glass: rgba(51, 65, 85, 0.5);
+    --neon-cyan: #00f2fe;
+    --neon-green: #10b981;
+    --neon-red: #ef4444;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--bg-main);
+    /* إضافة التموجات الضوئية النيون الساحرة للموقع بالكامل */
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* --- شريط التنقل العلوي - ستايل زجاجي مع توهج نيون ناعم --- */
+.top-nav {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 18px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-glass);
+    z-index: 1000;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+.brand-logo {
+    font-size: 24px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ffffff 30%, var(--neon-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.5px;
+}
+
+.status-badge {
+    background: rgba(16, 185, 129, 0.08);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- الحاوية الرئيسية المتناسقة --- */
+.middle-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 30px;
+}
+
+/* --- علبة الإعلانات الزجاجية المحدثة --- */
+.ad-card-wrapper {
+    width: 100%;
+    max-width: 600px;
+}
+
+.ad-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s ease-in-out;
+}
+
+.ad-card:hover {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 15px 35px rgba(0, 242, 254, 0.1);
+}
+
+.ad-card h3 {
+    color: var(--neon-cyan);
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.ad-card p, .ad-phone {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+/* --- لوحة الدخول والتسجيل الرسمية الزجاجية --- */
+.auth-panel {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 35px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.auth-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 25px;
+}
+
+.tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.tab.active {
+    color: #ffffff;
+    border-bottom: 3px solid var(--neon-cyan);
+    text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.rip-box {
+    background: rgba(245, 158, 11, 0.05);
+    border: 1px dashed rgba(245, 158, 11, 0.4);
+    padding: 14px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 13px;
+    color: #f59e0b;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    background: rgba(31, 41, 55, 0.5);
+    border: 1px solid var(--border-glass);
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input:focus {
+    border-color: var(--neon-cyan);
+    background: rgba(17, 24, 39, 0.8);
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.15);
+}
+
+.btn-submit-gate {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-submit-gate:hover { 
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+}
+
+.status-report-msg { margin-top: 15px; text-align: center; font-size: 13px; }
+
+/* --- 👑 ورشة المحاكاة (Dashboard Style المطور) 👑 --- */
+.app-panel {
+    display: none; 
+    width: 100%;
+}
+
+.simulator-layout {
+    display: flex;
+    gap: 30px;
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+}
+
+.controls-sidebar {
+    flex: 1;
+    background: rgba(31, 41, 55, 0.6);
+    padding: 24px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border: 1px solid var(--border-glass);
+}
+
+.controls-sidebar label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.btn-custom {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: #ffffff;
+    padding: 14px;
+    text-align: center;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover { 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.5);
+}
+
+/* تنسيق أزرار الألوان السريعة 🎨 */
+.color-palette {
+    display: flex;
+    gap: 12px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.color-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.color-btn:hover {
+    transform: scale(1.25) translateY(-3px);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 6px 15px rgba(0, 242, 254, 0.4);
+}
+
+.display-zone {
+    flex: 1.6;
+    background: #0f172a;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--border-glass);
+    min-height: 440px;
+    box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
+}
+
+/* --- زر معرض التصاميم المطور النيون --- */
+.btn-gallery {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    color: #090d16; /* جعل لون النص داكن ليتناسق مع السطوع النيون */
+    border: none;
+    padding: 14px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 15px;
+}
+
+.btn-gallery:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 242, 254, 0.6);
+    filter: brightness(1.05);
+}
+
+/* --- أسفل تذييل الصفحة (Footer) --- */
+.bottom-footer {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 30px 20px;
+    text-align: center;
+    border-top: 1px solid var(--border-glass);
+    font-size: 13px;
+    color: var(--text-secondary);
+    width: 100%;
+    margin-top: auto;
+}
+
+.team-links {
+    margin: 12px 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.developer-tag {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.developer-tag:hover {
+    color: var(--neon-cyan);
+}
+/* --- 🏎️ إعدادات الوضع الفضي الميكانيكي الاحترافي (Premium Silver Mechanical Mode) 🏎️ --- */
+body.light-mode {
+    --bg-main: #e2e8f0; /* لون فضي معدني مطفأ مستوحى من طلاء السيارات الفاخر (Nardo Gray Style) */
+    --bg-card: rgba(241, 245, 249, 0.7); /* كروت فضية زجاجية ناعمة جداً تندمج مع الخلفية */
+    --border-glass: rgba(148, 163, 184, 0.4); /* حدود رمادية ميكانيكية واضحة وراقية */
+    --text-primary: #0f172a; /* كربون داكن جداً للنصوص الأساسية لضمان حدة القراءة */
+    --text-secondary: #475569; /* رمادي داكن متناسق مع التدرج المعدني */
+    
+    /* تخفيف حدة ألوان النيون لتتناسب مع السطوع الفضي دون تضارب بصري */
+    --neon-cyan: #0284c7; /* تحويل النيون الساطع إلى أزرق رياضي عميق وعميق */
+    --neon-green: #15803d; /* تحويل الأخضر المشع إلى أخضر حلبات السباق الكلاسيكي */
+}
+
+/* إعادة هندسة التموجات الضوئية لتظهر كأنها انعكاس إضاءة داخل ورشة سيارات حقيقية */
+body.light-mode {
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.05) 0px, transparent 40%),
+        radial-gradient(at 100% 100%, rgba(21, 128, 61, 0.03) 0px, transparent 40%);
+}
+
+/* تحديث لوحات التحكم (الـ Sidebar والـ Auth Panel) لتصبح بلمسة طلاء معدني مصقول */
+body.light-mode .auth-panel,
+body.light-mode .controls-sidebar {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9) !important;
+    border: 1px solid rgba(148, 163, 184, 0.3) !important;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.06) !important;
+}
+
+/* منطقة عرض المحاكي 3D (Display Zone) في الوضع الفضي */
+body.light-mode .display-zone {
+    background: #f8fafc !important; /* لون هادئ جداً ليبرز تفاصيل وألوان مجسم السيارة ثلاثي الأبعاد */
+    border: 1px dashed rgba(148, 163, 184, 0.6) !important;
+    box-shadow: inset 0 4px 15px rgba(15, 23, 42, 0.03) !important;
+}
+
+/* أزرار الإدخال (Inputs) لتتناسب مع الهيكل الفضي */
+body.light-mode input {
+    background: #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    color: #0f172a;
+}
+body.light-mode input:focus {
+    border-color: var(--neon-cyan);
+    background: #ffffff;
+    box-shadow: 0 0 10px rgba(2, 132, 199, 0.1);
+}
+
+/* تعديل ستايل علبة الإعلانات وكروت المعرض لتبدو متجانسة ببرستيج عالي */
+body.light-mode .ad-card,
+body.light-mode .design-card {
+    background: rgba(255, 255, 255, 0.65) !important;
+    border: 1px solid rgba(148, 163, 184, 0.4) !important;
+}
+body.light-mode .design-card:hover {
+    border-color: var(--neon-cyan) !important;
+    box-shadow: 0 15px 30px rgba(2, 132, 199, 0.12) !important;
+}
+
+/* تفاصيل تذييل الصفحة (Footer) وشريط الأدوات */
+body.light-mode .gallery-actions-nav,
+body.light-mode .bottom-footer {
+    background: rgba(241, 245, 249, 0.8) !important;
+    border-top: 1px solid rgba(148, 163, 184, 0.3) !important;
+}
+body.light-mode .gallery-actions-nav {
+    border: 1px solid rgba(148, 163, 184, 0.3) !important;
+}
+
+/* زر معرض التصاميم الكربوني الفخم في الوضع الفضي */
+body.light-mode .btn-gallery {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+body.light-mode .btn-gallery:hover {
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.25);
+    filter: brightness(1.2);
+}
+
+body, .auth-panel, .controls-sidebar, .display-zone, .design-card {
+    transition: background 0.5s ease, border-color 0.5s ease, color 0.3s ease;
+}
+
+
+/* 🏎️ تأثير دوران صورة السيارة عند تحويم الفأرة (Hover) */
+.design-card:hover .design-img {
+    animation: spinCar 6s linear infinite;
+    filter: drop-shadow(0 10px 20px rgba(0, 242, 254, 0.3)); /* إضافة توهج أسفل السيارة أثناء الدوران */
+}
+
+/* 🔄 تعريف حركة الدوران الدائرية */
+@keyframes spinCar {
+    0% {
+        transform: rotateY(0deg);
+    }
+    100% {
+        transform: rotateY(360deg);
+    }
+}
+
+/* ✨ تهيئة كرت التصميم ليدعم البعد الثالث الخفيف */
+.design-card {
+    perspective: 1000px;
+    overflow: hidden;
+}
+
+.design-img {
+    transition: filter 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+/* 🏎️ إعدادات الحاوية المصغرة للـ 3D داخل الكرت */
+.mini-3d-canvas-container {
+    width: 100% !important;
+    height: 220px !important; /* إجبار الارتفاع لكي لا ينهار ويصبح 0 */
+    position: relative;
+    overflow: hidden;
+    background-color: #0f172a; /* لون الخلفية الداكنة */
+}
+
+/* 🎮 ضبط الـ Canvas الفعلي الخاص بـ Three.js ليمتد بالكامل */
+.mini-3d-canvas-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    pointer-events: none; /* لمنع تداخل حركة الماوس مع دوران السيارة التلقائي */
+}
+
+/* 🎴 تنسيق كرت التصميم نفسه ليتناسب مع المحرك */
+.design-card {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(51, 65, 85, 0.4);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.design-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 242, 254, 0.15);
+}

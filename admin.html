@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الأدمن | AutoCollo DZ</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; margin: 0; }
+        h1 { color: #38bdf8; border-bottom: 2px solid #334155; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px 15px; text-align: right; border-bottom: 1px solid #334155; }
+        th { background-color: #0284c7; color: white; }
+        tr:hover { background-color: #334155; }
+        
+        /* تنسيق أزرار العمليات */
+        .btn-action { color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; font-size: 13px; }
+        .btn-activate { background: #10b981; }
+        .btn-activate:hover { background: #059669; }
+        .btn-deactivate { background: #f97316; }
+        .btn-deactivate:hover { background: #ea580c; }
+        .btn-delete { background: #ef4444; }
+        .btn-delete:hover { background: #dc2626; }
+        
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .status-pending { background: #d97706; color: white; }
+        .status-active { background: #10b981; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1> لوحة تحكم الأدمن  - إدارة تفعيلات بريدي موب</h1>
+    <p>هنا تجد قائمة المستخدمين الذين سجلوا وقاموا بإدخال رقم المعاملة للتحقق:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>الاسم الكامل</th>
+                <th>البريد الإلكتروني</th>
+                <th>رقم معاملة بريدي موب</th>
+                <th>الحالة الحالية</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="usersTableBody">
+            </tbody>
+    </table>
+
+    <script>
+        // دالة لجلب المستخدمين من السيرفر وعرضهم في الجدول
+        async function fetchUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = "<tr><td colspan='5'>⏳ جاري جلب البيانات من السيرفر...</td></tr>";
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/admin/users');
+                const data = await response.json();
+                
+                tbody.innerHTML = ""; // تنظيف الجدول
+
+                if(data.users.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='5'>❌ لا يوجد أي مستخدم مسجل حالياً في القاعدة.</td></tr>";
+                    return;
+                }
+
+                data.users.forEach(user => {
+                    const tr = document.createElement('tr');
+                    
+                    // تحديد شكل الـ Badge على حسب الحالة
+                    const statusClass = user.status === 'active' ? 'status-active' : 'status-pending';
+                    const statusText = user.status === 'active' ? 'مفعّل ونشط' : 'قيد الانتظار';
+
+                    // شروط عرض الأزرار: التفعيل أو إلغاء التفعيل بناءً على الحالة الحالية
+                    let activationButton = "";
+                    if (user.status === 'pending') {
+                        activationButton = `<button class="btn-action btn-activate" onclick="activateUser('${user.email}')">✅ تفعيل</button>`;
+                    } else {
+                        activationButton = `<button class="btn-action btn-deactivate" onclick="deactivateUser('${user.email}')">⚠️ إلغاء التفعيل</button>`;
+                    }
+
+                    // زر الحذف يظهر دائماً لجميع الحسابات
+                    const deleteButton = `<button class="btn-action btn-delete" onclick="deleteUser('${user.email}')">🗑️ حذف</button>`;
+
+                    tr.innerHTML = `
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td style="color:#38bdf8; font-weight:bold; font-family:monospace;">${user.transaction_id}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>
+                            ${activationButton}
+                            ${deleteButton}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (err) {
+                tbody.innerHTML = "<tr><td colspan='5' style='color:#ef4444;'>❌ فشل الاتصال بالسيرفر! تأكد أن ملف main.py شغال.</td></tr>";
+            }
+        }
+
+        // دالة تفعيل المستخدم
+        async function activateUser(email) {
+            if(!confirm(`هل أنت متأكد من تفعيل الحساب ذو الإيميل: ${email}؟`)) return;
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/admin/activate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+
+                if(response.ok) {
+                    alert("🚀 تم تفعيل الحساب بنجاح والمحاكي متاح له الآن!");
+                    fetchUsers(); 
+                } else {
+                    alert("❌ حدث خطأ أثناء التفعيل.");
+                }
+            } catch (err) {
+                alert("❌ خطأ في الاتصال بالسيرفر.");
+            }
+        }
+
+        // دالة إلغاء تفعيل المستخدم (جديد)
+        async function deactivateUser(email) {
+            if(!confirm(`هل أنت متأكد من إلغاء تفعيل الحساب: ${email}؟`)) return;
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/admin/deactivate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+
+                if(response.ok) {
+                    alert("⚠️ تم إلغاء تفعيل الحساب بنجاح.");
+                    fetchUsers(); 
+                } else {
+                    alert("❌ حدث خطأ أثناء إلغاء التفعيل.");
+                }
+            } catch (err) {
+                alert("❌ خطأ في الاتصال بالسيرفر.");
+            }
+        }
+
+        // دالة حذف المستخدم نهائياً (جديد)
+        async function deleteUser(email) {
+            if(!confirm(`⚠️ تحذير: هل أنت متأكد تماماً من حذف هذا الحساب نهائياً (${email})؟ لا يمكن التراجع عن هذا الإجراء.`)) return;
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/admin/delete', {
+                    method: 'DELETE', // يفضل استخدام DELETE للمسح
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+
+                if(response.ok) {
+                    alert("🗑️ تم حذف المستخدم بنجاح من قاعدة البيانات.");
+                    fetchUsers(); 
+                } else {
+                    alert("❌ حدث خطأ أثناء محاولة الحذف.");
+                }
+            } catch (err) {
+                alert("❌ خطأ في الاتصال بالسيرفر.");
+            }
+        }
+
+        // تشغيل الجلب تلقائياً عند فتح الصفحة
+        document.addEventListener("DOMContentLoaded", fetchUsers);
+    </script>
+</body>
+</html>

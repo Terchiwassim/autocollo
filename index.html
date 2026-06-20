@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCollo DZ | الرئيسية</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="top-nav">
+        <h2 class="brand-logo">AutoCollo DZ 👑</h2>
+        <span class="status-badge" id="securityBadge">🔒 يرجى تسجيل الدخول للوصول للمحاكي</span>
+        <button id="themeToggle" style="background: none; border: 1px solid var(--border-glass); color: var(--text-primary); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+    🌓 تحويل المود
+</button>
+    </div>
+
+    <div class="middle-container">
+
+        <div class="ad-card-wrapper" id="adCard">
+            <div class="ad-card">
+                <div class="ad-details">
+                    <h3 id="adTitle">ورشة "الأناقة" لتعديل سيارات الـ 3D</h3>
+                    <p id="adDesc">📍 سطيف - صبغة مطفية وتغليف كامل وتعديل الهياكل</p>
+                    <div class="ad-phone">📞 للإعلان تواصل معنا: 0555-XX-XX-XX</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-panel" id="authGate">
+            <div class="auth-tabs">
+                <div id="tab-login" class="tab active" onclick="switchAuth('login')">تسجيل الدخول</div>
+                <div id="tab-register" class="tab" onclick="switchAuth('register')">إنشاء حساب جديد</div>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
+                <input type="password" id="loginPass" placeholder="كلمة المرور" required>
+                <button type="submit" class="btn-submit-gate">دخول للمحاكي</button>
+            </form>
+
+            <form id="registerForm" style="display: none;">
+                <div class="rip-box">
+                    <span>تفعيل الحساب بـ 2000 دج عبر Baridi Mob (RIP):</span>
+                    <strong>007999990001234567 89</strong>
+                </div>
+
+                <input type="text" id="regName" placeholder="الاسم الكامل" required>
+                <input type="email" id="regEmail" placeholder="البريد الإلكتروني" required>
+                <input type="password" id="regPass" placeholder="كلمة مرور الحساب" required>
+                <input type="text" id="regTxnId" placeholder="رقم المعاملة لبريدي موب (Transaction ID)" required>
+
+                <button type="submit" class="btn-submit-gate" style="background: #10b981;">إنشاء حساب وتأكيد الدفع</button>
+            </form>
+
+            <div id="statusReport" class="status-report-msg"></div>
+        </div>
+
+        <div class="app-panel" id="appPanel" style="display: none;">
+            <div class="simulator-layout">
+
+                <div class="controls-sidebar" style="position: relative; z-index: 10;">
+                    <h3 style="color: #38bdf8; margin-top: 0;">👋 ورشة المحاكاة</h3>
+                    <p style="font-size: 13px; color: #94a3b8;">قم بتعديل سيارتك التفاعلية وحفظها مباشرة:</p>
+
+                    <label>اسم السيارة المراد تعديلها:</label>
+                    <input type="text" id="carInput" placeholder="مثال: Ibiza, Golf 8, Accent, Cupra">
+
+                    <label style="margin-top: 15px;">🎨 صبغة الهيكل والسقف الفورية:</label>
+                    <div class="color-palette">
+                        <div class="color-btn" style="background: #ef4444;" onclick="applyColor(0xef4444, 0.2, 0.6)" title="أحمر فيراري"></div>
+                        <div class="color-btn" style="background: #2563eb;" onclick="applyColor(0x2563eb, 0.2, 0.6)" title="أزرق رياضي"></div>
+                        <div class="color-btn" style="background: #111827;" onclick="applyColor(0x111827, 0.8, 0.1)" title="أسود مطفي (Matte)"></div>
+                        <div class="color-btn" style="background: #d4af37;" onclick="applyColor(0xd4af37, 0.1, 0.9)" title="ذهبي ملكي"></div>
+                        <div class="color-btn" style="background: #10b981;" onclick="applyColor(0x10b981, 0.3, 0.4)" title="أخضر ليموني"></div>
+                        <div class="color-btn" style="background: #e2e8f0;" onclick="applyColor(0xffffff, 0.1, 0.8)" title="أبيض لؤلؤي"></div>
+                    </div>
+
+                    <div class="custom-picker-zone" style="margin-top: 12px; display: flex; align-items: center; gap: 10px; background: rgba(30, 41, 59, 0.5); padding: 8px 12px; border-radius: 8px; border: 1px dashed #334155;">
+                        <input type="color" id="freeColorPicker" value="#374151" oninput="window.applyColor(this.value, 0.2, 0.5)" style="border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; background: transparent; padding: 0;">
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-size: 13px; color: #f1f5f9; font-weight: bold;">طيف ألوان مخصص</span>
+                            <span style="font-size: 11px; color: #bdb292;">اختر لونك اللامحدود</span>
+                        </div>
+                    </div>
+
+                    <label style="margin-top: 18px;">🏢 إدراج شعار أو لوغو مخصص (Sticker PNG):</label>
+                    <div class="upload-picker-zone" style="margin-top: 5px; background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px; border: 1px dashed #10b981;">
+                        <input type="file" id="logoUpload" accept="image/*" onchange="window.applyLogoSticker(event)" style="font-size: 12px; color: #94a3b8; width: 100%;">
+                    </div>
+
+                    <label style="margin-top: 12px; display: block; color: #94a3b8; font-size: 13px;">📏 حجم الملصق الحالي (Scale):</label>
+                    <input type="range" id="stickerSizeSlider" min="0.1" max="2.0" step="0.05" value="0.4" style="width: 100%; accent-color: #10b981; cursor: pointer;">
+
+                    <button class="btn-custom" id="undoBtn" onclick="window.undoLastAction()" style="width: 100%; border: none; font-weight: bold; background: #64748b; margin-top: 18px; margin-bottom: 8px;">↩️ تراجع عن التعديل الأخير</button>
+
+                    <button class="btn-custom" id="tuningBtn" onclick="window.save3DDesign()" style="width: 100%; border: none; font-weight: bold;">💾 حفظ لقطة التصميم بالمعرض</button>
+                    
+                    <a href="gallery.html" class="btn-gallery">🎨 الذهاب إلى معرض تصاميمي</a>
+
+                    <div class="btn-custom" onclick="logout()" style="background:#ef4444; margin-top: auto; font-size:12px; padding:8px; text-align: center; cursor: pointer;">تسجيل الخروج</div>
+                </div>
+
+                <div class="display-zone" id="3dContainer" style="position: relative; overflow: hidden; width: 100%; height: 100%;">
+                    <canvas id="scene" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: auto;"></canvas>
+
+                    <div class="preview-box" id="placeholderText" style="position: relative; z-index: 2; pointer-events: none; color: #64748b; text-align: center; padding: 40px 0;">
+                        🚗 يرجى إدخال اسم السيارة للبدء في التعديل التفاعلي المباشر...
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bottom-footer" id="mainFooter">
+        <p>💡 تم تطوير المنصة بواسطة مبرمجي المشروع:</p>
+        <div class="team-links">
+            <a href="https://www.facebook.com/fares.nedjma.406556" class="developer-tag" target="_blank">👑 فارس (Nedjma Fares)</a>
+            <a href="https://www.facebook.com/profile.php?id=61580760117723"  class="developer-tag" target="_blank">👑 وسيم (Terchi Wassim abdlhadi)</a>
+            <a href="https://www.facebook.com/lakhneche.mohammed" class="developer-tag" target="_blank">👑 محمد (Lakhneche mohamed hocine)</a>
+            <a href="https://www.facebook.com/saw.khouel" class="developer-tag" target="_blank">👑 خالد (Khouiel Kaled)</a>
+        </div>
+        <h3 class="footer-ad-text">📢 لإعلاناتكم يرجى التواصل معنا عبر إيميل فريق التطوير: teamautocollo.dz@gmail.com</h3>
+        <p class="copyright">© 2026 AutoCollo DZ. جميع الحقوق محفوظة.</p>
+    </div>
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+    </script>
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
