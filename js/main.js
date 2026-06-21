@@ -375,7 +375,7 @@ const carModelsMap = {
     'cupra': './assets/car.glb', 'كوبرا': './assets/car.glb',
     'golf': './assets/golf.glb', 'golf 8': './assets/golf.glb', 'جولف': './assets/golf.glb',
     'accent': './assets/Accent.glb', 'اكسنت': './assets/Accent.glb',
-    'fiat tipo': './assets/Fiat.glb', 'فيات تيبو': './assets/Fiat.glb',
+    'tipo': './assets/Fiat.glb', 'تيبو': './assets/Fiat.glb',
     'chery': './assets/Chery.glb', 'شيري': './assets/Chery.glb',
     'partner': './assets/Partner.glb', 'بيجو': './assets/Partner.glb',
     'logan': './assets/Logan.glb', 'لوجان': './assets/Logan.glb',
