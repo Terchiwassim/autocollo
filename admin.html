@@ -46,18 +46,21 @@
     </table>
 
     <script>
+        // الرابط المباشر لسيرفر Render الخاص بك
+        const API_BASE_URL = "https://autocollo-api.onrender.com";
+
         // دالة لجلب المستخدمين من السيرفر وعرضهم في الجدول
         async function fetchUsers() {
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = "<tr><td colspan='5'>⏳ جاري جلب البيانات من السيرفر...</td></tr>";
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/admin/users');
+                const response = await fetch(`${API_BASE_URL}/admin/users`);
                 const data = await response.json();
                 
                 tbody.innerHTML = ""; // تنظيف الجدول
 
-                if(data.users.length === 0) {
+                if(!data.users || data.users.length === 0) {
                     tbody.innerHTML = "<tr><td colspan='5'>❌ لا يوجد أي مستخدم مسجل حالياً في القاعدة.</td></tr>";
                     return;
                 }
@@ -94,7 +97,7 @@
                 });
 
             } catch (err) {
-                tbody.innerHTML = "<tr><td colspan='5' style='color:#ef4444;'>❌ فشل الاتصال بالسيرفر! تأكد أن ملف main.py شغال.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='5' style='color:#ef4444;'>❌ فشل الاتصال بالسيرفر! تأكد أن السيرفر شغال.</td></tr>";
             }
         }
 
@@ -103,7 +106,7 @@
             if(!confirm(`هل أنت متأكد من تفعيل الحساب ذو الإيميل: ${email}؟`)) return;
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/admin/activate', {
+                const response = await fetch(`${API_BASE_URL}/admin/activate`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email })
@@ -120,12 +123,12 @@
             }
         }
 
-        // دالة إلغاء تفعيل المستخدم (جديد)
+        // دالة إلغاء تفعيل المستخدم
         async function deactivateUser(email) {
             if(!confirm(`هل أنت متأكد من إلغاء تفعيل الحساب: ${email}؟`)) return;
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/admin/deactivate', {
+                const response = await fetch(`${API_BASE_URL}/admin/deactivate`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email })
@@ -142,13 +145,13 @@
             }
         }
 
-        // دالة حذف المستخدم نهائياً (جديد)
+        // دالة حذف المستخدم نهائياً
         async function deleteUser(email) {
             if(!confirm(`⚠️ تحذير: هل أنت متأكد تماماً من حذف هذا الحساب نهائياً (${email})؟ لا يمكن التراجع عن هذا الإجراء.`)) return;
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/admin/delete', {
-                    method: 'DELETE', // يفضل استخدام DELETE للمسح
+                const response = await fetch(`${API_BASE_URL}/admin/delete`, {
+                    method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email })
                 });
