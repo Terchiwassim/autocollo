@@ -148,7 +148,8 @@ def delete_user_design(design_id: int, db: Session = Depends(get_db)):
 
 @app.get("/admin/users")
 def get_all_users(db: Session = Depends(get_db)):
-    return {"users": db.query(UserModel).all()}
+    # ✅ تم التعديل هنا ليعيد قائمة المستخدمين مباشرة كمصفوفة لتتوافق مع الفرونت إند وتظهر البيانات فوراً
+    return db.query(UserModel).all()
 
 @app.post("/admin/activate")
 def activate_user(data: ActivateSchema, db: Session = Depends(get_db)):

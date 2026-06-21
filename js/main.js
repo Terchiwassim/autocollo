@@ -180,7 +180,7 @@ window.switchAuth = (type) => {
 
 window.handleLogin = async (e) => {
     e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
+    const email = document.getElementById('loginEmail').value.trim();
     const report = document.getElementById('statusReport');
 
     try {
@@ -206,15 +206,30 @@ window.handleLogin = async (e) => {
     }
 };
 
+// ✅ الدالة المصححة والآمنة للتسجيل وإرسال البيانات بالشكل الصحيح
 window.handleStrictRegister = async (e) => {
     e.preventDefault();
-    const name = document.getElementById('regName').value;
-    const email = document.getElementById('regEmail').value;
+    
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
     const password = document.getElementById('regPass').value;
-    const transactionId = document.getElementById('regTxnId').value;
+    const transactionId = document.getElementById('regTxnId').value.trim();
     const report = document.getElementById('statusReport');
 
+    if (!name || !email || !password || !transactionId) {
+        if (report) {
+            report.innerText = "❌ يرجى ملء جميع الحقول المطلوبة!";
+            report.style.color = "#ef4444";
+        }
+        return;
+    }
+
     const payload = { name, email, password, transaction_id: transactionId };
+
+    if (report) {
+        report.innerText = "⏳ جاري إرسال البيانات إلى السيرفر...";
+        report.style.color = "#38bdf8";
+    }
 
     try {
         const response = await fetch('https://autocollo-api.onrender.com/register-secure', {
@@ -222,13 +237,27 @@ window.handleStrictRegister = async (e) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        localStorage.setItem('user_strict_email', email);
-        if (report) {
-            report.innerHTML = `⏳ <strong>تم الإرسال بنجاح:</strong> سيقوم الأدمن بالتفعيل قريباً!`;
-            report.style.color = "#fbbf24";
+
+        if (response.ok) {
+            localStorage.setItem('user_strict_email', email);
+            if (report) {
+                report.innerHTML = `⏳ <strong>تم الإرسال بنجاح:</strong> سيقوم الأدمن بالتفعيل قريباً!`;
+                report.style.color = "#fbbf24";
+            }
+            document.getElementById('registerForm').reset();
+        } else {
+            const errData = await response.json().catch(() => ({}));
+            if (report) {
+                report.innerText = `❌ فشل التسجيل: ${errData.detail || "خطأ من السيرفر"}`;
+                report.style.color = "#ef4444";
+            }
         }
     } catch (err) {
-        if (report) report.innerText = "❌ فشل الاتصال بالخادم.";
+        console.error("Fetch Error:", err);
+        if (report) {
+            report.innerText = "❌ فشل الاتصال بالخادم! تأكد من تشغيل السيرفر.";
+            report.style.color = "#ef4444";
+        }
     }
 };
 
@@ -350,15 +379,17 @@ const carModelsMap = {
     'chery': './assets/Chery.glb', 'شيري': './assets/Chery.glb',
     'partner': './assets/Partner.glb', 'بيجو': './assets/Partner.glb',
     'logan': './assets/Logan.glb', 'لوجان': './assets/Logan.glb',
-     'ibiza': './assets/ibiza.glb',
-                'إيبيزا': './assets/ibiza.glb',
-                'qq':'./assets/qq.glb',
-                // 'lupo':'./assets/volkswagen_golf_vision_gti.glb',
+    'ibiza': './assets/ibiza.glb', 'إيبيزا': './assets/ibiza.glb',
+    'qq':'./assets/qq.glb',
 };
 
 document.addEventListener("DOMContentLoaded", () => {
     const regForm = document.getElementById('registerForm');
-    if (regForm) regForm.addEventListener('submit', window.handleStrictRegister);
+    if (regForm) {
+        // حذف أي استماع قديم وإضافة الدالة المصححة والجديدة
+        regForm.removeAttribute('onsubmit');
+        regForm.addEventListener('submit', window.handleStrictRegister);
+    }
 
     init3DScene();
     initAdSlider();
@@ -386,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         carModel.scale.setScalar(3.8 / maxDimension);
                     }
 
-                    actionHistory = []; // تفريغ الذاكرة عند تبديل السيارة
+                    actionHistory = []; 
 
                     carModel.traverse((child) => {
                         if (child.isMesh) {
@@ -415,19 +446,14 @@ window.addEventListener('resize', () => {
 
 document.addEventListener("DOMContentLoaded", () => {
     const themeToggle = document.getElementById("themeToggle");
-    
-    // 1. فحص المود المحفوظ سابقاً في متصفح المستخدم
     const currentTheme = localStorage.getItem("theme");
     if (currentTheme === "light") {
         document.body.classList.add("light-mode");
     }
 
-    // 2. الاستماع لضغطات الزر وعمل التبديل
     if (themeToggle) {
         themeToggle.addEventListener("click", () => {
             document.body.classList.toggle("light-mode");
-            
-            // 3. حفظ الخيار الحالي في الذاكرة المحلية
             if (document.body.classList.contains("light-mode")) {
                 localStorage.setItem("theme", "light");
             } else {
