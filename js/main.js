@@ -184,7 +184,7 @@ window.handleLogin = async (e) => {
     const report = document.getElementById('statusReport');
 
     try {
-        const res = await fetch(`http://127.0.0.1:8000/check-status/${email}`);
+        const res = await fetch(`https://autocollo-api.onrender.com/check-status/${email}`);
         const data = await res.json();
 
         if (data.status === 'active') {
@@ -217,7 +217,7 @@ window.handleStrictRegister = async (e) => {
     const payload = { name, email, password, transaction_id: transactionId };
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/register-secure', {
+        const response = await fetch('https://autocollo-api.onrender.com/register-secure', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -236,7 +236,7 @@ async function checkSessionFromServer() {
     const email = localStorage.getItem('user_strict_email');
     if (!email) return;
     try {
-        const res = await fetch(`http://127.0.0.1:8000/check-status/${email}`);
+        const res = await fetch(`https://autocollo-api.onrender.com/check-status/${email}`);
         const data = await res.json();
         if (data.status === 'active') unlockSimulator();
     } catch (e) {}
@@ -326,7 +326,7 @@ window.save3DDesign = async () => {
     const userEmail = localStorage.getItem('user_strict_email') || "test@example.com";
     
     try {
-        await fetch('http://127.0.0.1:8000/gallery/save', {
+        await fetch('https://autocollo-api.onrender.com/gallery/save', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_email: userEmail, car_name: carName, modification: "3D", image_url: capturedSnapshot })

@@ -19,7 +19,7 @@ async function loadUserGallery() {
     }
 
     try {
-        const response = await fetch(`http://127.0.0.1:8000/gallery/${userEmail}`);
+        const response = await fetch(`https://autocollo-api.onrender.com/gallery/${userEmail}`);
         if (!response.ok) throw new Error("فشل جلب البيانات");
         
         const designs = await response.json();
@@ -65,7 +65,7 @@ async function deleteDesign(designId, event) {
     if (!confirm("هل أنت متأكد من رغبتك في حذف هذا التصميم نهائياً؟")) return;
 
     try {
-        const response = await fetch(`http://127.0.0.1:8000/gallery/delete/${designId}`, {
+        const response = await fetch(`https://autocollo-api.onrender.com/gallery/delete/${designId}`, {
             method: 'DELETE'
         });
 
