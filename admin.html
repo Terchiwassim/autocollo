@@ -41,8 +41,7 @@
                 <th>الإجراءات</th>
             </tr>
         </thead>
-        <tbody id="usersTableBody">
-            </tbody>
+        <tbody id="usersTableBody"></tbody>
     </table>
 
     <script>
@@ -56,16 +55,18 @@
 
             try {
                 const response = await fetch(`${API_BASE_URL}/admin/users`);
-                const data = await response.json();
+                const users = await response.json();
                 
                 tbody.innerHTML = ""; // تنظيف الجدول
 
-                if(!data.users || data.users.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='5'>❌ لا يوجد أي مستخدم مسجل حالياً في القاعدة.</td></tr>";
+                // ✅ التعديل هنا للتحقق من المصفوفة المباشرة
+                if(!users || users.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>❌ لا يوجد أي مستخدم مسجل حالياً في القاعدة.</td></tr>";
                     return;
                 }
 
-                data.users.forEach(user => {
+                // ✅ التعديل هنا للمرور على المصفوفة مباشرة
+                users.forEach(user => {
                     const tr = document.createElement('tr');
                     
                     // تحديد شكل الـ Badge على حسب الحالة
@@ -97,7 +98,8 @@
                 });
 
             } catch (err) {
-                tbody.innerHTML = "<tr><td colspan='5' style='color:#ef4444;'>❌ فشل الاتصال بالسيرفر! تأكد أن السيرفر شغال.</td></tr>";
+                console.error(err);
+                tbody.innerHTML = "<tr><td colspan='5' style='color:#ef4444; text-align:center;'>❌ فشل الاتصال بالسيرفر! تأكد أن السيرفر شغال.</td></tr>";
             }
         }
 
@@ -166,6 +168,11 @@
                 alert("❌ خطأ في الاتصال بالسيرفر.");
             }
         }
+
+        // ربط الدوال بنطاق الـ Window لتفادي مشاكل الـ Scoping مع الأزرار
+        window.activateUser = activateUser;
+        window.deactivateUser = deactivateUser;
+        window.deleteUser = deleteUser;
 
         // تشغيل الجلب تلقائياً عند فتح الصفحة
         document.addEventListener("DOMContentLoaded", fetchUsers);
