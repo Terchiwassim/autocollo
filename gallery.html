@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="mainHtml">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoCollo DZ | معرض المحاكاة الاحترافي 3D</title>
+    <title data-ar="AutoCollo DZ | معرض المحاكاة الاحترافي 3D" data-en="AutoCollo DZ | Professional 3D Simulation Gallery">AutoCollo DZ | معرض المحاكاة الاحترافي 3D</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
@@ -335,65 +335,73 @@
             border-radius: 16px;
             border: 1px dashed var(--border-glass);
         }
+
         /* --- 🚗 تنسيقات إضافية خاصة بكروت المعرض والنافذة ثلاثية الأبعاد في الوضع الفضي --- */
-body.light-mode .design-card {
-    background: rgba(255, 255, 255, 0.65) !important;
-    border: 1px solid rgba(148, 163, 184, 0.4) !important;
-    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04) !important;
-}
+        body.light-mode .design-card {
+            background: rgba(255, 255, 255, 0.65) !important;
+            border: 1px solid rgba(148, 163, 184, 0.4) !important;
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04) !important;
+        }
 
-body.light-mode .design-card:hover {
-    border-color: var(--neon-cyan) !important;
-    box-shadow: 0 15px 35px rgba(2, 132, 199, 0.15) !important;
-}
+        body.light-mode .design-card:hover {
+            border-color: var(--neon-cyan) !important;
+            box-shadow: 0 15px 35px rgba(2, 132, 199, 0.15) !important;
+        }
 
-body.light-mode .design-car-name {
-    color: #0f172a !important; /* جعل اسم السيارة داكناً وواضحاً */
-}
+        body.light-mode .design-car-name {
+            color: #0f172a !important;
+        }
 
-/* النافذة المنبثقة التفاعلية 3D المحدثة للوضع المضيء */
-body.light-mode #previewModal {
-    background: rgba(15, 23, 42, 0.4) !important; /* خلفية ضبابية داكنة خفيفة لتركيز الانتباه */
-}
+        body.light-mode #previewModal {
+            background: rgba(15, 23, 42, 0.4) !important;
+        }
 
-body.light-mode #previewModal .modal-content {
-    background: #e2e8f0 !important; /* تحويل لوحة العرض المنبثقة إلى الفضي المصقول */
-    border: 1px solid rgba(148, 163, 184, 0.6) !important;
-    color: #0f172a !important;
-    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.2) !important;
-}
+        body.light-mode #previewModal .modal-content {
+            background: #e2e8f0 !important;
+            border: 1px solid rgba(148, 163, 184, 0.6) !important;
+            color: #0f172a !important;
+            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.2) !important;
+        }
 
-/* شريط معلومات السيارة السفلي داخل النافذة المنبثقة */
-body.light-mode .modal-footer-info {
-    background: rgba(255, 255, 255, 0.5) !important;
-    border-top: 1px solid rgba(148, 163, 184, 0.4) !important;
-    color: #475569 !important;
-}
-        
+        body.light-mode .modal-footer-info {
+            background: rgba(255, 255, 255, 0.5) !important;
+            border-top: 1px solid rgba(148, 163, 184, 0.4) !important;
+            color: #475569 !important;
+        }
     </style>
 </head>
 
-<body>
+<body class="">
 
     <div class="top-nav">
-        <h2 class="brand-logo">AutoCollo DZ 👑 <span style="font-size: 14px; color: var(--neon-cyan); font-weight: 400;">METAVERSE GARAGE</span></h2>
-        <span class="status-badge" style="background: rgba(16, 185, 129, 0.08); color: var(--neon-green);">● لوحة تحكم مصممي الـ 3D نشطة</span>
-   <button id="themeToggle" style="background: none; border: 1px solid var(--border-glass); color: var(--text-primary); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
-    🌓 تحويل المود
-</button>
+        <h2 class="brand-logo">
+            AutoCollo DZ 👑 
+            <span style="font-size: 14px; color: var(--neon-cyan); font-weight: 400;">METAVERSE GARAGE</span>
+        </h2>
+        <span class="status-badge" id="navBadge" style="background: rgba(16, 185, 129, 0.08); color: var(--neon-green);" data-ar="● لوحة تحكم مصممي الـ 3D نشطة" data-en="● 3D Designers Control Panel Active">● لوحة تحكم مصممي الـ 3D نشطة</span>
+        
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <!-- زر تبديل لغة المعرض والتحكم الفوري -->
+            <button id="langToggle" onclick="toggleGalleryLanguage()" style="background: var(--neon-cyan, #00f2fe); border: none; color: #090d16; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+                🌐 English
+            </button>
+            <button id="themeToggle" style="background: none; border: 1px solid var(--border-glass); color: var(--text-primary); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+                🌓 تحويل المود
+            </button>
+        </div>
     </div>
 
     <div class="gallery-container">
         <div class="gallery-actions-nav">
-            <h2 class="gallery-title">🛠️ مرآب تصاميمك الشخصية</h2>
+            <h2 class="gallery-title" id="galleryHeading" data-ar="🛠️ مرآب تصاميمك الشخصية" data-en="🛠️ Your Personal Designs Garage">🛠️ مرآب تصاميمك الشخصية</h2>
             <div class="nav-buttons-group">
-                <!-- <button onclick="goBackStep()" class="btn-custom-nav btn-back-step">↩️ عودة للخلف</button> -->
-                <a href="index.html" class="btn-custom-nav btn-back-main">🚗 ورشة التعديل الرئيسية</a>
+                <a href="index.html" class="btn-custom-nav btn-back-main" id="btnBackWorkshop" data-ar="🚗 ورشة التعديل الرئيسية" data-en="🚗 Main Tuning Workshop">🚗 ورشة التعديل الرئيسية</a>
             </div>
         </div>
         
         <div class="designs-grid" id="galleryGrid">
-            <div class="no-data">⏳ جاري الاتصال بخوادم الـ 3D جلب تصاميمك المخصصة...</div>
+            <!-- سيتم استبدال هذا النص ديناميكياً عبر الجافا سكريبت بناءً على اللغة المفضلة -->
+            <div class="no-data" id="initialLoadingText" data-ar="⏳ جاري الاتصال بخوادم الـ 3D جلب تصاميمك المخصصة..." data-en="⏳ Connecting to 3D servers to fetch your custom designs...">⏳ جاري الاتصال بخوادم الـ 3D جلب تصاميمك المخصصة...</div>
         </div>
     </div>
 
@@ -401,25 +409,95 @@ body.light-mode .modal-footer-info {
         <div class="modal-content">
             <button class="modal-close" onclick="closeDesignModal()">✕</button>
             
-            <div class="modal-3d-zone" id="modal3dZone">
-                </div>
+            <div class="modal-3d-zone" id="modal3dZone"></div>
 
             <div class="modal-details-footer">
                 <div>
-                    <h3 id="modalCarName" style="color: var(--text-primary); margin: 0; font-size: 24px; font-weight: 800;">اسم السيارة</h3>
-                    <span style="color: var(--neon-cyan); font-size: 12px; font-weight: 600;">◀ محرك الريندر النشط: Three.js WebGL ✨</span>
+                    <h3 id="modalCarName" style="color: var(--text-primary); margin: 0; font-size: 24px; font-weight: 800;" data-ar="اسم السيارة" data-en="Car Name">اسم السيارة</h3>
+                    <span style="color: var(--neon-cyan); font-size: 12px; font-weight: 600;" id="modalEngineText" data-ar="◀ محرك الريندر النشط: Three.js WebGL ✨" data-en="◀ Active Rendering Engine: Three.js WebGL ✨">◀ محرك الريندر النشط: Three.js WebGL ✨</span>
                 </div>
-                <p style="color: var(--text-secondary); font-size: 13px; max-width: 400px; text-align: left; margin: 0; line-height: 1.6;">
-                    💡 <b>تحكم كامل:</b> اسحب بالفأرة لتدوير مجسم السيارة بزاوية $360^{\circ}$، أو استخدم عجلة الفأرة للتكبير والتصغير وفحص ملصقات وتفاصيل الهيكل.
+                <p id="modalInstructionText" style="color: var(--text-secondary); font-size: 13px; max-width: 400px; text-align: justify; margin: 0; line-height: 1.6;" data-ar="💡 تحكم كامل: اسحب بالفأرة لتدوير مجسم السيارة بزاوية 360°، أو استخدم عجلة الفأرة للتكبير والتصغير وفحص ملصقات وتفاصيل الهيكل." data-en="💡 Full Control: Drag with your mouse to rotate the car 360°, or use the scroll wheel to zoom in/out and examine stickers and body details.">
+                    💡 <b>تحكم كامل:</b> اسحب بالفأرة لتدوير مجسم السيارة بزاوية 360°، أو استخدم عجلة الفأرة للتكبير والتصغير وفحص ملصقات وتفاصيل الهيكل.
                 </p>
             </div>
         </div>
     </div>
 
-  <script type="importmap">
-    { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
-</script>
-<script type="module" src="js/gallery.js"></script>
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+    </script>
+    <script type="module" src="js/gallery.js"></script>
+
+    <!-- 🌐 نظام التحكم باللغات الفوري المرتبط بالصفحة الرئيسية والـ LocalStorage -->
+    <!-- 🌐 نظام التحكم باللغات الفوري المرتبط بالصفحة الرئيسية والـ LocalStorage -->
+    <script>
+        function applyGalleryLanguage(lang) {
+            const htmlTag = document.getElementById('mainHtml');
+            const langBtn = document.getElementById('langToggle');
+
+            if (lang === "en") {
+                htmlTag.setAttribute('lang', 'en');
+                htmlTag.setAttribute('dir', 'ltr');
+                if (langBtn) langBtn.innerText = "🌐 العربية";
+            } else {
+                htmlTag.setAttribute('lang', 'ar');
+                htmlTag.setAttribute('dir', 'rtl');
+                if (langBtn) langBtn.innerText = "🌐 English";
+            }
+
+            // 1. ترجمة الكلمات الثابتة التي تملك وسم الـ data
+            document.querySelectorAll('[data-ar]').forEach(element => {
+                element.innerText = element.getAttribute(`data-${lang}`);
+            });
+
+            // 2. معالجة نصوص شبكة كروت الـ 3D المضافة ديناميكياً
+            document.querySelectorAll('.badge-3d-live').forEach(badge => {
+                badge.innerText = lang === 'en' ? 'Live 3D' : 'مباشر 3D';
+            });
+            
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.innerText = lang === 'en' ? '🗑️ Delete' : '🗑️ حذف التصميم';
+            });
+
+            // 3. 🚨 حل مشكلة نص "المرآب فارغ" عند غياب البيانات
+            const noDataBox = document.querySelector('.no-data');
+            if (noDataBox) {
+                // نتحقق مما إذا كان النص الحالي هو نص "المرآب فارغ" (سواء بالعربي أو الإنجليزي) لترجمته فوراً
+                const emptyMsgAr = "مرآبك فارغ حالياً! قم بتعديل سيارة في الورشة واضغط على زر الحفظ لتظهر هنا";
+                const emptyMsgEn = "Your garage is currently empty! Customize a car in the workshop and press the save button to see it here.";
+                
+                if (noDataBox.innerText.includes("مرآبك فارغ") || noDataBox.innerText.includes("Your garage is currently empty")) {
+                    noDataBox.innerText = lang === 'en' ? emptyMsgEn : emptyMsgAr;
+                }
+            }
+        }
+
+        // دالة تبديل اللغة عند ضغط المستخدم على الزر مباشرة داخل المعرض
+        function toggleGalleryLanguage() {
+            let currentLang = localStorage.getItem('preferredLang') || 'ar';
+            let nextLang = currentLang === 'ar' ? 'en' : 'ar';
+            
+            localStorage.setItem('preferredLang', nextLang); // تحديث القيمة بذاكرة المتصفح
+            applyGalleryLanguage(nextLang);
+        }
+
+        // تفعيل الفحص الفوري فور دخول المستخدم للمعرض
+        document.addEventListener("DOMContentLoaded", () => {
+            let activeLang = localStorage.getItem('preferredLang') || 'ar';
+            applyGalleryLanguage(activeLang);
+
+            // مراقبة التغييرات داخل صندوق المعرض (في حال تأخر ملف الـ JS في حقن نص "المرآب فارغ")
+            const gridObserver = new MutationObserver(() => {
+                let currentLang = localStorage.getItem('preferredLang') || 'ar';
+                applyGalleryLanguage(currentLang);
+            });
+
+            const galleryGrid = document.getElementById('galleryGrid');
+            if (galleryGrid) {
+                gridObserver.observe(galleryGrid, { childList: true });
+            }
+        });
+    </script>
 </body>
 
 </html>

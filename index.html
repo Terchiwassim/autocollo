@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="mainHtml">
 
 <head>
     <meta charset="UTF-8">
@@ -12,10 +12,17 @@
 
     <div class="top-nav">
         <h2 class="brand-logo">AutoCollo DZ 👑</h2>
-        <span class="status-badge" id="securityBadge">🔒 يرجى تسجيل الدخول للوصول للمحاكي</span>
-        <button id="themeToggle" style="background: none; border: 1px solid var(--border-glass); color: var(--text-primary); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
-    🌓 تحويل المود
-</button>
+        <span class="status-badge" id="securityBadge" data-ar="🔒 يرجى تسجيل الدخول للوصول للمحاكي" data-en="🔒 Please login to access the simulator">🔒 يرجى تسجيل الدخول للوصول للمحاكي</span>
+        
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <!-- زر تحويل اللغة -->
+            <button id="langToggle" onclick="toggleLanguage()" style="background: var(--primary, #38bdf8); border: none; color: white; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+                🌐 English
+            </button>
+            <button id="themeToggle" style="background: none; border: 1px solid var(--border-glass); color: var(--text-primary); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+                🌓 تحويل المود
+            </button>
+        </div>
     </div>
 
     <div class="middle-container">
@@ -23,37 +30,37 @@
         <div class="ad-card-wrapper" id="adCard">
             <div class="ad-card">
                 <div class="ad-details">
-                    <h3 id="adTitle">ورشة "الأناقة" لتعديل سيارات الـ 3D</h3>
-                    <p id="adDesc">📍 سطيف - صبغة مطفية وتغليف كامل وتعديل الهياكل</p>
-                    <div class="ad-phone">📞 للإعلان تواصل معنا: 0555-XX-XX-XX</div>
+                    <h3 id="adTitle" data-ar="ورشة 'الأناقة' لتعديل سيارات الـ 3D" data-en="'Al-Anaka' Workshop for 3D Car Tuning">ورشة "الأناقة" لتعديل سيارات الـ 3D</h3>
+                    <p id="adDesc" data-ar="📍 سطيف - صبغة مطفية وتغليف كامل وتعديل الهياكل" data-en="📍 Setif - Matte paint, Full wrapping & Body tuning">📍 سطيف - صبغة مطفية وتغليف كامل وتعديل الهياكل</p>
+                    <div class="ad-phone" id="adPhone" data-ar="📞 للإعلان تواصل معنا: 0555-XX-XX-XX" data-en="📞 For Ads Contact Us: 0555-XX-XX-XX">📞 للإعلان تواصل معنا: 0555-XX-XX-XX</div>
                 </div>
             </div>
         </div>
 
         <div class="auth-panel" id="authGate">
             <div class="auth-tabs">
-                <div id="tab-login" class="tab active" onclick="switchAuth('login')">تسجيل الدخول</div>
-                <div id="tab-register" class="tab" onclick="switchAuth('register')">إنشاء حساب جديد</div>
+                <div id="tab-login" class="tab active" onclick="switchAuth('login')" data-ar="تسجيل الدخول" data-en="Login">تسجيل الدخول</div>
+                <div id="tab-register" class="tab" onclick="switchAuth('register')" data-ar="إنشاء حساب جديد" data-en="Create New Account">إنشاء حساب جديد</div>
             </div>
 
             <form id="loginForm" onsubmit="handleLogin(event)">
-                <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
-                <input type="password" id="loginPass" placeholder="كلمة المرور" required>
-                <button type="submit" class="btn-submit-gate">دخول للمحاكي</button>
+                <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required data-placeholder-ar="البريد الإلكتروني" data-placeholder-en="Email Address">
+                <input type="password" id="loginPass" placeholder="كلمة المرور" required data-placeholder-ar="كلمة المرور" data-placeholder-en="Password">
+                <button type="submit" class="btn-submit-gate" id="btnLoginText" data-ar="دخول للمحاكي" data-en="Enter Simulator">دخول للمحاكي</button>
             </form>
 
             <form id="registerForm" style="display: none;">
-                <div class="rip-box">
-                    <span>تفعيل الحساب بـ 2000 دج عبر Baridi Mob (RIP):</span>
+                <div class="rip-box" id="ripBoxText">
+                    <span data-ar="تفعيل الحساب بـ 2000 دج عبر Baridi Mob (RIP):" data-en="Activate account for 2000 DZD via Baridi Mob (RIP):">تفعيل الحساب بـ 2000 دج عبر Baridi Mob (RIP):</span>
                     <strong>007999990001234567 89</strong>
                 </div>
 
-                <input type="text" id="regName" placeholder="الاسم الكامل" required>
-                <input type="email" id="regEmail" placeholder="البريد الإلكتروني" required>
-                <input type="password" id="regPass" placeholder="كلمة مرور الحساب" required>
-                <input type="text" id="regTxnId" placeholder="رقم المعاملة لبريدي موب (Transaction ID)" required>
+                <input type="text" id="regName" placeholder="الاسم الكامل" required data-placeholder-ar="الاسم الكامل" data-placeholder-en="Full Name">
+                <input type="email" id="regEmail" placeholder="البريد الإلكتروني" required data-placeholder-ar="البريد الإلكتروني" data-placeholder-en="Email Address">
+                <input type="password" id="regPass" placeholder="كلمة مرور الحساب" required data-placeholder-ar="كلمة مرور الحساب" data-placeholder-en="Account Password">
+                <input type="text" id="regTxnId" placeholder="رقم المعاملة لبريدي موب (Transaction ID)" required data-placeholder-ar="رقم المعاملة لبريدي موب (Transaction ID)" data-placeholder-en="Baridi Mob Transaction ID">
 
-                <button type="submit" class="btn-submit-gate" style="background: #10b981;">إنشاء حساب وتأكيد الدفع</button>
+                <button type="submit" class="btn-submit-gate" id="btnRegisterText" style="background: #10b981;" data-ar="إنشاء حساب وتأكيد الدفع" data-en="Create Account & Confirm Payment">إنشاء حساب وتأكيد الدفع</button>
             </form>
 
             <div id="statusReport" class="status-report-msg"></div>
@@ -63,13 +70,13 @@
             <div class="simulator-layout">
 
                 <div class="controls-sidebar" style="position: relative; z-index: 10;">
-                    <h3 style="color: #38bdf8; margin-top: 0;">👋 ورشة المحاكاة</h3>
-                    <p style="font-size: 13px; color: #94a3b8;">قم بتعديل سيارتك التفاعلية وحفظها مباشرة:</p>
+                    <h3 id="sidebarTitle" style="color: #38bdf8; margin-top: 0;" data-ar="👋 ورشة المحاكاة" data-en="👋 Simulation Workshop">👋 ورشة المحاكاة</h3>
+                    <p id="sidebarDesc" style="font-size: 13px; color: #94a3b8;" data-ar="قم بتعديل سيارتك التفاعلية وحفظها مباشرة:" data-en="Customize your interactive car and save it directly:">قم بتعديل سيارتك التفاعلية وحفظها مباشرة:</p>
 
-                    <label>اسم السيارة المراد تعديلها:</label>
-                    <input type="text" id="carInput" placeholder="مثال: Ibiza, Golf 8, Accent, Cupra">
+                    <label id="lblCarInput" data-ar="اسم السيارة المراد تعديلها:" data-en="Car name to customize:">اسم السيارة المراد تعديلها:</label>
+                    <input type="text" id="carInput" placeholder="مثال: Ibiza, Golf 8, Accent, Cupra" data-placeholder-ar="مثال: Ibiza, Golf 8, Accent, Cupra" data-placeholder-en="e.g., Ibiza, Golf 8, Accent, Cupra">
 
-                    <label style="margin-top: 15px;">🎨 صبغة الهيكل والسقف الفورية:</label>
+                    <label id="lblColors" style="margin-top: 15px;" data-ar="🎨 صبغة الهيكل والسقف الفورية:" data-en="🎨 Instant Body & Roof Paint:">🎨 صبغة الهيكل والسقف الفورية:</label>
                     <div class="color-palette">
                         <div class="color-btn" style="background: #ef4444;" onclick="applyColor(0xef4444, 0.2, 0.6)" title="أحمر فيراري"></div>
                         <div class="color-btn" style="background: #2563eb;" onclick="applyColor(0x2563eb, 0.2, 0.6)" title="أزرق رياضي"></div>
@@ -82,32 +89,32 @@
                     <div class="custom-picker-zone" style="margin-top: 12px; display: flex; align-items: center; gap: 10px; background: rgba(30, 41, 59, 0.5); padding: 8px 12px; border-radius: 8px; border: 1px dashed #334155;">
                         <input type="color" id="freeColorPicker" value="#374151" oninput="window.applyColor(this.value, 0.2, 0.5)" style="border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; background: transparent; padding: 0;">
                         <div style="display: flex; flex-direction: column;">
-                            <span style="font-size: 13px; color: #f1f5f9; font-weight: bold;">طيف ألوان مخصص</span>
-                            <span style="font-size: 11px; color: #bdb292;">اختر لونك اللامحدود</span>
+                            <span id="txtCustomColorTitle" style="font-size: 13px; color: #f1f5f9; font-weight: bold;" data-ar="طيف ألوان مخصص" data-en="Custom Color Palette">طيف ألوان مخصص</span>
+                            <span id="txtCustomColorDesc" style="font-size: 11px; color: #bdb292;" data-ar="اختر لونك اللامحدود" data-en="Choose your unlimited color">اختر لونك اللامحدود</span>
                         </div>
                     </div>
 
-                    <label style="margin-top: 18px;">🏢 إدراج شعار أو لوغو مخصص (Sticker PNG):</label>
+                    <label id="lblSticker" style="margin-top: 18px;" data-ar="🏢 إدراج شعار أو لوغو مخصص (Sticker PNG):" data-en="🏢 Insert Custom Logo/Sticker (Sticker PNG):">🏢 إدراج شعار أو لوغو مخصص (Sticker PNG):</label>
                     <div class="upload-picker-zone" style="margin-top: 5px; background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px; border: 1px dashed #10b981;">
                         <input type="file" id="logoUpload" accept="image/*" onchange="window.applyLogoSticker(event)" style="font-size: 12px; color: #94a3b8; width: 100%;">
                     </div>
 
-                    <label style="margin-top: 12px; display: block; color: #94a3b8; font-size: 13px;">📏 حجم الملصق الحالي (Scale):</label>
+                    <label id="lblScale" style="margin-top: 12px; display: block; color: #94a3b8; font-size: 13px;" data-ar="📏 حجم الملصق الحالي (Scale):" data-en="📏 Current Sticker Size (Scale):">📏 حجم الملصق الحالي (Scale):</label>
                     <input type="range" id="stickerSizeSlider" min="0.1" max="2.0" step="0.05" value="0.4" style="width: 100%; accent-color: #10b981; cursor: pointer;">
 
-                    <button class="btn-custom" id="undoBtn" onclick="window.undoLastAction()" style="width: 100%; border: none; font-weight: bold; background: #64748b; margin-top: 18px; margin-bottom: 8px;">↩️ تراجع عن التعديل الأخير</button>
+                    <button class="btn-custom" id="undoBtn" onclick="window.undoLastAction()" style="width: 100%; border: none; font-weight: bold; background: #64748b; margin-top: 18px; margin-bottom: 8px;" data-ar="↩️ تراجع عن التعديل الأخير" data-en="↩️ Undo Last Modification">↩️ تراجع عن التعديل الأخير</button>
 
-                    <button class="btn-custom" id="tuningBtn" onclick="window.save3DDesign()" style="width: 100%; border: none; font-weight: bold;">💾 حفظ لقطة التصميم بالمعرض</button>
+                    <button class="btn-custom" id="tuningBtn" onclick="window.save3DDesign()" style="width: 100%; border: none; font-weight: bold;" data-ar="💾 حفظ لقطة التصميم بالمعرض" data-en="💾 Save Design Snapshot to Gallery">💾 حفظ لقطة التصميم بالمعرض</button>
                     
-                    <a href="gallery.html" class="btn-gallery">🎨 الذهاب إلى معرض تصاميمي</a>
+                    <a href="gallery.html" id="btnGalleryLink" class="btn-gallery" data-ar="🎨 الذهاب إلى معرض تصاميمي" data-en="🎨 Go to My Gallery">🎨 الذهاب إلى معرض تصاميمي</a>
 
-                    <div class="btn-custom" onclick="logout()" style="background:#ef4444; margin-top: auto; font-size:12px; padding:8px; text-align: center; cursor: pointer;">تسجيل الخروج</div>
+                    <div class="btn-custom" onclick="logout()" id="btnLogoutText" style="background:#ef4444; margin-top: auto; font-size:12px; padding:8px; text-align: center; cursor: pointer;" data-ar="تسجيل الخروج" data-en="Logout">تسجيل الخروج</div>
                 </div>
 
                 <div class="display-zone" id="3dContainer" style="position: relative; overflow: hidden; width: 100%; height: 100%;">
                     <canvas id="scene" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: auto;"></canvas>
 
-                    <div class="preview-box" id="placeholderText" style="position: relative; z-index: 2; pointer-events: none; color: #64748b; text-align: center; padding: 40px 0;">
+                    <div class="preview-box" id="placeholderText" style="position: relative; z-index: 2; pointer-events: none; color: #64748b; text-align: center; padding: 40px 0;" data-ar="🚗 يرجى إدخال اسم السيارة للبدء في التعديل التفاعلي المباشر..." data-en="🚗 Please enter car name to start live interactive tuning...">
                         🚗 يرجى إدخال اسم السيارة للبدء في التعديل التفاعلي المباشر...
                     </div>
                 </div>
@@ -118,21 +125,65 @@
     </div>
 
     <div class="bottom-footer" id="mainFooter">
-        <p>💡 تم تطوير المنصة بواسطة مبرمجي المشروع:</p>
+        <p id="footerDevTitle" data-ar="💡 تم تطوير المنصة بواسطة مبرمجي المشروع:" data-en="💡 Platform developed by project programmers:">💡 تم تطوير المنصة بواسطة مبرمجي المشروع:</p>
         <div class="team-links">
-            <a href="https://www.facebook.com/fares.nedjma.406556" class="developer-tag" target="_blank">👑 فارس (Nedjma Fares)</a>
-            <a href="https://www.facebook.com/profile.php?id=61580760117723"  class="developer-tag" target="_blank">👑 وسيم (Terchi Wassim abdlhadi)</a>
-            <a href="https://www.facebook.com/lakhneche.mohammed" class="developer-tag" target="_blank">👑 محمد (Lakhneche mohamed hocine)</a>
-            <a href="https://www.facebook.com/saw.khouel" class="developer-tag" target="_blank">👑 خالد (Khouiel Kaled)</a>
+            <a href="https://www.facebook.com/fares.nedjma.406556" class="developer-tag" target="_blank" data-ar="👑 مارس (Nedjma Fares)" data-en="👑 Fares (Nedjma Fares)">👑 فارس (Nedjma Fares)</a>
+            <a href="https://www.facebook.com/profile.php?id=61580760117723"  class="developer-tag" target="_blank" data-ar="👑 وسيم (Terchi Wassim abdlhadi)" data-en="👑 Wassim (Terchi Wassim abdlhadi)">👑 وسيم (Terchi Wassim abdlhadi)</a>
+            <a href="https://www.facebook.com/lakhneche.mohammed" class="developer-tag" target="_blank" data-ar="👑 محمد (Lakhneche mohamed hocine)" data-en="👑 Mohamed (Lakhneche mohamed hocine)">👑 محمد (Lakhneche mohamed hocine)</a>
+            <a href="https://www.facebook.com/saw.khouel" class="developer-tag" target="_blank" data-ar="👑 خالد (Khouiel Kaled)" data-en="👑 Khaled (Khouiel Kaled)">👑 خالد (Khouiel Kaled)</a>
         </div>
-        <h3 class="footer-ad-text">📢 لإعلاناتكم يرجى التواصل معنا عبر إيميل فريق التطوير: teamautocollo.dz@gmail.com</h3>
-        <p class="copyright">© 2026 AutoCollo DZ. جميع الحقوق محفوظة.</p>
+        <h3 class="footer-ad-text" id="footerAdText" data-ar="📢 لإعلاناتكم يرجى التواصل معنا عبر إيميل فريق التطوير: teamautocollo.dz@gmail.com" data-en="📢 For advertisements, please contact development team email: teamautocollo.dz@gmail.com">📢 لإعلاناتكم يرجى التواصل معنا عبر إيميل فريق التطوير: teamautocollo.dz@gmail.com</h3>
+        <p class="copyright" id="footerCopyright" data-ar="© 2026 AutoCollo DZ. جميع الحقوق محفوظة." data-en="© 2026 AutoCollo DZ. All rights reserved.">© 2026 AutoCollo DZ. جميع الحقوق محفوظة.</p>
     </div>
 
     <script type="importmap">
         { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
     </script>
     <script type="module" src="js/main.js"></script>
+
+    <!-- 🌐 سكريبت الترجمة المطور لحفظ لغة المستخدم وربطها مع القالوري -->
+    <script>
+        // دالة تطبيق اللغة على العناصر بالاعتماد على خيار (ar أو en)
+        function applyLanguage(lang) {
+            const htmlTag = document.getElementById('mainHtml');
+            const langBtn = document.getElementById('langToggle');
+
+            if (lang === "en") {
+                htmlTag.setAttribute('lang', 'en');
+                htmlTag.setAttribute('dir', 'ltr');
+                if(langBtn) langBtn.innerText = "🌐 العربية";
+            } else {
+                htmlTag.setAttribute('lang', 'ar');
+                htmlTag.setAttribute('dir', 'rtl');
+                if(langBtn) langBtn.innerText = "🌐 English";
+            }
+
+            // ترجمة النصوص الحاملة للوسوم الافتراضية
+            document.querySelectorAll('[data-ar]').forEach(element => {
+                element.innerText = element.getAttribute(`data-${lang}`);
+            });
+
+            // ترجمة الـ Placeholders داخل الحقول
+            document.querySelectorAll('[data-placeholder-ar]').forEach(input => {
+                input.setAttribute('placeholder', input.getAttribute(`data-placeholder-${lang}`));
+            });
+        }
+
+        // دالة الضغط على الزر لعكس اللغة وحفظها
+        function toggleLanguage() {
+            let savedLang = localStorage.getItem('preferredLang') || 'ar';
+            let newLang = savedLang === 'ar' ? 'en' : 'ar';
+            
+            localStorage.setItem('preferredLang', newLang); // حفظ الخيار الجديد في ذاكرة المتصفح
+            applyLanguage(newLang);
+        }
+
+        // عند تحميل الصفحة مباشرة: افحص هل توجد لغة محفوظة مسبقاً وطبقها فوراً
+        document.addEventListener("DOMContentLoaded", () => {
+            let initialLang = localStorage.getItem('preferredLang') || 'ar';
+            applyLanguage(initialLang);
+        });
+    </script>
 </body>
 
 </html>

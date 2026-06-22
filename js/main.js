@@ -12,9 +12,59 @@ const mouse = new THREE.Vector2();
 let actionHistory = []; 
 const INITIAL_CAR_COLOR = 0x374151; 
 
+// 🌐 قاموس الترجمة الفوري للنصوص البرمجية الديناميكية والتنبيهات
+const translations = {
+    ar: {
+        noCarAlert: "يرجى كتابة اسم السيارة أولاً!",
+        stickerLoaded: "🎯 تم تحميل الشعار! اضغط فوق السيارة 3D لتثبيته.",
+        noModifications: "🔄 لا توجد أي تعديلات سابقة للتراجع عنها حالياً!",
+        selectCarFirst: "❌ يرجى اختيار سيارة وتعديلها أولاً!",
+        savingText: "⏳ جاري الحفظ...",
+        saveSuccess: "🎯 تم حفظ تعديلك داخل المعرض بنجاح!",
+        saveError: "❌ تعذر الحفظ بالسيرفر.",
+        saveBtnNormal: "💾 حفظ لقطة التصميم بالمعرض",
+        pendingMsg: "⏳ طلبك قيد المراجعة حالياً من طرف الأدمن .",
+        accountNotFound: "❌ الحساب غير موجود! يرجى إنشاء حساب جديد أولاً.",
+        serverError: "❌ تعذر الاتصال بالسيرفر.",
+        fillAllFields: "❌ يرجى ملء جميع الحقول المطلوبة!",
+        sendingData: "⏳ جاري إرسال البيانات إلى السيرفر...",
+        sendSuccess: "⏳ <strong>تم الإرسال بنجاح:</strong> سيقوم الأدمن بالتفعيل قريباً!",
+        fetchError: "❌ فشل الاتصال بالخادم! تأكد من تشغيل السيرفر."
+    },
+    en: {
+        noCarAlert: "Please enter a car name first!",
+        stickerLoaded: "🎯 Logo loaded! Click anywhere on the 3D car to place it.",
+        noModifications: "🔄 No previous modifications found to undo!",
+        selectCarFirst: "❌ Please choose and customize a car first!",
+        savingText: "⏳ Saving...",
+        saveSuccess: "🎯 Your modification has been saved to the gallery successfully!",
+        saveError: "❌ Failed to save design to server.",
+        saveBtnNormal: "💾 Save Design Snapshot to Gallery",
+        pendingMsg: "⏳ Your request is currently pending review by the admin.",
+        accountNotFound: "❌ Account not found! Please create a new account first.",
+        serverError: "❌ Server connection error.",
+        fillAllFields: "❌ Please fill in all required fields!",
+        sendingData: "⏳ Sending data to server...",
+        sendSuccess: "⏳ <strong>Sent successfully:</strong> Admin will activate your account soon!",
+        fetchError: "❌ Connection failed! Make sure the server is running."
+    }
+};
+
+// دالة مساعدة سريعة لجلب اللغة الحالية المحددة في المتصفح
+function getActiveLang() {
+    return localStorage.getItem('preferredLang') || 'ar';
+}
+
+// 📢 إعلانات الورشات المحدثة ثنائية اللغة (تتبدل ديناميكياً)
 const workshopAds = [
-    { title: "ورشة 'الأناقة' لتعديل سيارات الـ 3D", desc: "📍 سطيف - صبغة مطفية وتغليف كامل وتعديل الهياكل" },
-    { title: "مركز 'AutoTuning DZ' للمحترفين", desc: "📍 وهران - تركيب جنوط رياضية وتزويد المحركات" }
+    { 
+        title_ar: "ورشة 'الأناقة' لتعديل سيارات الـ 3D", desc_ar: "📍 سطيف - صبغة مطفية وتغليف كامل وتعديل الهياكل",
+        title_en: "'Al-Anaka' Workshop for 3D Car Tuning", desc_en: "📍 Setif - Matte paint, Full wrapping & Body tuning"
+    },
+    { 
+        title_ar: "مركز 'AutoTuning DZ' للمحترفين", desc_ar: "📍 وهران - تركيب جنوط رياضية وتزويد المحركات",
+        title_en: "'AutoTuning DZ' Center for Professionals", desc_en: "📍 Oran - Sports rims installation & Engine tuning"
+    }
 ];
 let currentAdIndex = 0;
 
@@ -27,8 +77,11 @@ function initAdSlider() {
             setTimeout(() => {
                 const titleEl = document.getElementById('adTitle');
                 const descEl = document.getElementById('adDesc');
-                if (titleEl) titleEl.innerText = workshopAds[currentAdIndex].title;
-                if (descEl) descEl.innerText = workshopAds[currentAdIndex].desc;
+                const lang = getActiveLang();
+                
+                if (titleEl) titleEl.innerText = lang === 'en' ? workshopAds[currentAdIndex].title_en : workshopAds[currentAdIndex].title_ar;
+                if (descEl) descEl.innerText = lang === 'en' ? workshopAds[currentAdIndex].desc_en : workshopAds[currentAdIndex].desc_ar;
+                
                 card.style.opacity = 1;
             }, 400);
         }
@@ -136,10 +189,11 @@ function onCanvasClick(event) {
     }
 }
 
-// ↩️ دالة التراجع البرمجية
+// ↩️ دالة التراجع البرمجية المترجمة
 window.undoLastAction = () => {
+    const lang = getActiveLang();
     if (actionHistory.length === 0) {
-        alert("🔄 لا توجد أي تعديلات سابقة للتراجع عنها حالياً!");
+        alert(translations[lang].noModifications);
         return;
     }
 
@@ -182,6 +236,7 @@ window.handleLogin = async (e) => {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim();
     const report = document.getElementById('statusReport');
+    const lang = getActiveLang();
 
     try {
         const res = await fetch(`https://autocollo-api.onrender.com/check-status/${email}`);
@@ -192,21 +247,21 @@ window.handleLogin = async (e) => {
             unlockSimulator();
         } else if (data.status === 'pending') {
             if (report) {
-                report.innerHTML = "⏳ طلبك قيد المراجعة حالياً من طرف الأدمن .";
+                report.innerHTML = translations[lang].pendingMsg;
                 report.style.color = "#fbbf24";
             }
         } else {
             if (report) {
-                report.innerText = "❌ الحساب غير موجود! يرجى إنشاء حساب جديد أولاً.";
+                report.innerText = translations[lang].accountNotFound;
                 report.style.color = "#ef4444";
             }
         }
     } catch (err) {
-        if (report) report.innerText = "❌ تعذر الاتصال بالسيرفر.";
+        if (report) report.innerText = translations[lang].serverError;
     }
 };
 
-// ✅ الدالة المصححة والآمنة للتسجيل وإرسال البيانات بالشكل الصحيح
+// ✅ الدالة المصححة والآمنة للتسجيل والتحقق ثنائي اللغة
 window.handleStrictRegister = async (e) => {
     e.preventDefault();
     
@@ -215,10 +270,11 @@ window.handleStrictRegister = async (e) => {
     const password = document.getElementById('regPass').value;
     const transactionId = document.getElementById('regTxnId').value.trim();
     const report = document.getElementById('statusReport');
+    const lang = getActiveLang();
 
     if (!name || !email || !password || !transactionId) {
         if (report) {
-            report.innerText = "❌ يرجى ملء جميع الحقول المطلوبة!";
+            report.innerText = translations[lang].fillAllFields;
             report.style.color = "#ef4444";
         }
         return;
@@ -227,7 +283,7 @@ window.handleStrictRegister = async (e) => {
     const payload = { name, email, password, transaction_id: transactionId };
 
     if (report) {
-        report.innerText = "⏳ جاري إرسال البيانات إلى السيرفر...";
+        report.innerText = translations[lang].sendingData;
         report.style.color = "#38bdf8";
     }
 
@@ -241,21 +297,21 @@ window.handleStrictRegister = async (e) => {
         if (response.ok) {
             localStorage.setItem('user_strict_email', email);
             if (report) {
-                report.innerHTML = `⏳ <strong>تم الإرسال بنجاح:</strong> سيقوم الأدمن بالتفعيل قريباً!`;
+                report.innerHTML = translations[lang].sendSuccess;
                 report.style.color = "#fbbf24";
             }
             document.getElementById('registerForm').reset();
         } else {
             const errData = await response.json().catch(() => ({}));
             if (report) {
-                report.innerText = `❌ فشل التسجيل: ${errData.detail || "خطأ من السيرفر"}`;
+                report.innerText = lang === 'en' ? `❌ Registration Failed: ${errData.detail || "Server error"}` : `❌ فشل التسجيل: ${errData.detail || "خطأ من السيرفر"}`;
                 report.style.color = "#ef4444";
             }
         }
     } catch (err) {
         console.error("Fetch Error:", err);
         if (report) {
-            report.innerText = "❌ فشل الاتصال بالخادم! تأكد من تشغيل السيرفر.";
+            report.innerText = translations[lang].fetchError;
             report.style.color = "#ef4444";
         }
     }
@@ -271,13 +327,16 @@ async function checkSessionFromServer() {
     } catch (e) {}
 }
 
+// تعديل دالة فك الحظر لتتوافق مع اللغتين ديناميكياً عند الفتح المباشر
 function unlockSimulator() {
     document.getElementById('authGate').style.display = 'none';
     document.getElementById('adCard').style.display = 'none';
     document.getElementById('appPanel').style.display = 'block';
     const badge = document.getElementById('securityBadge');
+    const lang = getActiveLang();
+
     if (badge) {
-        badge.innerText = "🔓 الحساب مفعّل ونشط";
+        badge.innerText = lang === 'en' ? "🔓 Account activated & active" : "🔓 الحساب مفعّل ونشط";
         badge.style.background = "#10b981";
     }
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
@@ -313,8 +372,9 @@ function applyColorToMeshes(colorValue, roughness, metalness) {
 }
 
 window.applyColor = (colorValue, roughness, metalness) => {
+    const lang = getActiveLang();
     if (!carModel) {
-        alert("يرجى كتابة اسم السيارة أولاً!");
+        alert(translations[lang].noCarAlert);
         return;
     }
     actionHistory.push({ type: 'color', color: colorValue });
@@ -323,6 +383,7 @@ window.applyColor = (colorValue, roughness, metalness) => {
 
 window.applyLogoSticker = (event) => {
     const file = event.target.files[0];
+    const lang = getActiveLang();
     if (!file || !carModel) return;
 
     const reader = new FileReader();
@@ -332,7 +393,7 @@ window.applyLogoSticker = (event) => {
             texture.wrapT = THREE.ClampToEdgeWrapping;
             currentStickerTexture = texture;
             document.getElementById("scene").style.cursor = "crosshair";
-            alert("🎯 تم تحميل الشعار! اضغط فوق السيارة 3D لتثبيته.");
+            alert(translations[lang].stickerLoaded);
         });
     };
     reader.readAsDataURL(file);
@@ -342,14 +403,15 @@ window.save3DDesign = async () => {
     const carName = document.getElementById('carInput').value.trim();
     const btn = document.getElementById('tuningBtn');
     const canvasEl = document.getElementById("scene");
+    const lang = getActiveLang();
 
     if (!carName) {
-        alert("❌ يرجى اختيار سيارة وتعديلها أولاً!");
+        alert(translations[lang].selectCarFirst);
         return;
     }
 
     btn.disabled = true;
-    btn.innerText = "⏳ جاري الحفظ...";
+    btn.innerText = translations[lang].savingText;
 
     const capturedSnapshot = canvasEl.toDataURL("image/png");
     const userEmail = localStorage.getItem('user_strict_email') || "test@example.com";
@@ -360,12 +422,12 @@ window.save3DDesign = async () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_email: userEmail, car_name: carName, modification: "3D", image_url: capturedSnapshot })
         });
-        alert("🎯 تم حفظ تعديلك داخل المعرض بنجاح!");
+        alert(translations[lang].saveSuccess);
     } catch (err) {
-        alert("❌ تعذر الحفظ بالسيرفر.");
+        alert(translations[lang].saveError);
     } finally {
         btn.disabled = false;
-        btn.innerText = "💾 حفظ لقطة التصميم بالمعرض";
+        btn.innerText = translations[lang].saveBtnNormal;
     }
 };
 
@@ -386,7 +448,6 @@ const carModelsMap = {
 document.addEventListener("DOMContentLoaded", () => {
     const regForm = document.getElementById('registerForm');
     if (regForm) {
-        // حذف أي استماع قديم وإضافة الدالة المصححة والجديدة
         regForm.removeAttribute('onsubmit');
         regForm.addEventListener('submit', window.handleStrictRegister);
     }

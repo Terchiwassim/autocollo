@@ -1,3 +1,32 @@
+// 🌐 قاموس الترجمة الفوري لنصوص صفحة المعرض والتنبيهات
+const galleryTranslations = {
+    ar: {
+        loginRequired: "❌ يرجى تسجيل الدخول أولاً لرؤية معرض تصاميمك.",
+        emptyGarage: "🚗 مرآبك فارغ حالياً! قم بتعديل سيارة في الورشة واضغط على زر الحفظ لتظهر هنا.",
+        serverError: "❌ فشل الاتصال بالسيرفر! تأكد من تشغيل ملف main.py.",
+        deleteConfirm: "هل أنت متأكد من رغبتك في حذف هذا التصميم نهائياً؟",
+        deleteSuccess: "🎯 تم حذف التصميم بنجاح!",
+        deleteFailed: "❌ فشل حذف التصميم من السيرفر.",
+        connectionError: "❌ حدث خطأ في الاتصال.",
+        deleteBtn: "🗑️ حذف"
+    },
+    en: {
+        loginRequired: "❌ Please log in first to view your custom designs gallery.",
+        emptyGarage: "🚗 Your garage is currently empty! Customize a car in the workshop and press the save button to see it here.",
+        serverError: "❌ Connection to server failed! Please ensure main.py is running.",
+        deleteConfirm: "Are you sure you want to permanently delete this design?",
+        deleteSuccess: "🎯 Design deleted successfully!",
+        deleteFailed: "❌ Failed to delete the design from server.",
+        connectionError: "❌ Connection error occurred.",
+        deleteBtn: "🗑️ Delete"
+    }
+};
+
+// دالة مساعدة سريعة لمعرفة اللغة النشطة حاليًا في المتصفح
+function getGalleryLang() {
+    return localStorage.getItem('preferredLang') || 'ar';
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     loadUserGallery();
 });
@@ -12,9 +41,10 @@ window.goBackStep = goBackStep;
 async function loadUserGallery() {
     const grid = document.getElementById("galleryGrid");
     const userEmail = localStorage.getItem('user_strict_email');
+    const lang = getGalleryLang();
 
     if (!userEmail) {
-        grid.innerHTML = `<div class="no-data">❌ يرجى تسجيل الدخول أولاً لرؤية معرض تصاميمك.</div>`;
+        grid.innerHTML = `<div class="no-data">${galleryTranslations[lang].loginRequired}</div>`;
         return;
     }
 
@@ -25,7 +55,7 @@ async function loadUserGallery() {
         const designs = await response.json();
 
         if (designs.length === 0) {
-            grid.innerHTML = `<div class="no-data">🚗 مرآبك فارغ حالياً! قم بتعديل سيارة في الورشة واضغط على زر الحفظ لتظهر هنا.</div>`;
+            grid.innerHTML = `<div class="no-data">${galleryTranslations[lang].emptyGarage}</div>`;
             return;
         }
 
@@ -34,12 +64,10 @@ async function loadUserGallery() {
         designs.forEach(design => {
             const card = document.createElement("div");
             card.className = "design-card";
-            
-            // 📝 تم حذف حدث الضغط (Click Event) الذي كان يفتح نافذة الـ 3D تماماً بناءً على طلبك
 
             card.innerHTML = `
                 <div class="card-glass-overlay"></div>
-                <button class="btn-delete" onclick="deleteDesign(${design.id}, event)">🗑️ حذف</button>
+                <button class="btn-delete" onclick="deleteDesign(${design.id}, event)">${galleryTranslations[lang].deleteBtn}</button>
                 
                 <div class="card-preview-zone">
                     <img class="design-img" src="${design.image_url}" alt="${design.car_name}">
@@ -54,15 +82,16 @@ async function loadUserGallery() {
 
     } catch (err) {
         console.error(err);
-        grid.innerHTML = `<div class="no-data">❌ فشل الاتصال بالسيرفر! تأكد من تشغيل ملف main.py.</div>`;
+        grid.innerHTML = `<div class="no-data">${galleryTranslations[lang].serverError}</div>`;
     }
 }
 
 // 🗑️ دالة حذف التصميم وإرسال الطلب للباك إند
 async function deleteDesign(designId, event) {
     event.stopPropagation(); // منع انتشار الحدث
+    const lang = getGalleryLang();
     
-    if (!confirm("هل أنت متأكد من رغبتك في حذف هذا التصميم نهائياً؟")) return;
+    if (!confirm(galleryTranslations[lang].deleteConfirm)) return;
 
     try {
         const response = await fetch(`https://autocollo-api.onrender.com/gallery/delete/${designId}`, {
@@ -70,14 +99,14 @@ async function deleteDesign(designId, event) {
         });
 
         if (response.ok) {
-            alert("🎯 تم حذف التصميم بنجاح!");
+            alert(galleryTranslations[lang].deleteSuccess);
             loadUserGallery(); // تحديث فوري للشبكة
         } else {
-            alert("❌ فشل حذف التصميم من السيرفر.");
+            alert(galleryTranslations[lang].deleteFailed);
         }
     } catch (error) {
         console.error("Error deleting design:", error);
-        alert("❌ حدث خطأ في الاتصال.");
+        alert(galleryTranslations[lang].connectionError);
     }
 }
 
@@ -100,5 +129,14 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem("theme", isLight ? "light" : "dark");
         });
     }
-});
 
+    // 🌐 الاستماع لزر تبديل اللغة إذا كان متواجد في صفحة المعرض لتحديث الكروت فوراً
+    const langToggleBtn = document.getElementById('langToggle');
+    if (langToggleBtn) {
+        langToggleBtn.addEventListener('click', () => {
+            setTimeout(() => {
+                loadUserGallery(); // إعادة بناء المعرض باللغة الجديدة فوراً
+            }, 50);
+        });
+    }
+});
