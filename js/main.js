@@ -8,11 +8,13 @@ let currentStickerTexture = null;
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// 🕒 نظام ذاكرة التراجع (Undo History)
+// 🕒 نظام ذاكرة التراجع (Undo History) والمتغيرات الافتراضية للمواد
 let actionHistory = []; 
 const INITIAL_CAR_COLOR = 0x374151; 
+let currentRoughness = 0.2; // اللمعان الافتراضي للهيكل عند بدء التحميل
+let currentMetalness = 0.5; // الانعكاس المعدني الافتراضي للهيكل عند بدء التحميل
 
-// 🌐 قاموس الترجمة الفوري للنصوص البرمجية الديناميكية والتنبيهات
+// 🌐 قاموس الترجمة الفوري للنصوص البرمجية الديناميكية والتنبيهات وشاشات التحميل
 const translations = {
     ar: {
         noCarAlert: "يرجى كتابة اسم السيارة أولاً!",
@@ -29,7 +31,9 @@ const translations = {
         fillAllFields: "❌ يرجى ملء جميع الحقول المطلوبة!",
         sendingData: "⏳ جاري إرسال البيانات إلى السيرفر...",
         sendSuccess: "⏳ <strong>تم الإرسال بنجاح:</strong> سيقوم الأدمن بالتفعيل قريباً!",
-        fetchError: "❌ فشل الاتصال بالخادم! تأكد من تشغيل السيرفر."
+        fetchError: "❌ فشل الاتصال بالخادم! تأكد من تشغيل السيرفر.",
+        loaderTitle: "⏳ جاري تجهيز الورشة...",
+        loaderSubText: "يرجى الانتظار، جاري تحميل مجسم السيارة 3D..."
     },
     en: {
         noCarAlert: "Please enter a car name first!",
@@ -46,7 +50,9 @@ const translations = {
         fillAllFields: "❌ Please fill in all required fields!",
         sendingData: "⏳ Sending data to server...",
         sendSuccess: "⏳ <strong>Sent successfully:</strong> Admin will activate your account soon!",
-        fetchError: "❌ Connection failed! Make sure the server is running."
+        fetchError: "❌ Connection failed! Make sure the server is running.",
+        loaderTitle: "⏳ Preparing Workshop...",
+        loaderSubText: "Please wait, loading 3D car model..."
     }
 };
 
@@ -88,6 +94,41 @@ function initAdSlider() {
     }, 4500);
 }
 
+// 🎨 دالة توليد صورة إضاءة استوديو متدرجة (Studio HDRI) برمجياً للحفاظ على سرعة الموقع
+function createGradientHDRI() {
+    const width = 512;
+    const height = 256;
+    const size = width * height;
+    const data = new Float32Array(3 * size);
+
+    for (let i = 0; i < size; i++) {
+        const y = Math.floor(i / width) / height;
+        const x = (i % width) / width;
+
+        // لون الخلفية الانعكاسية الافتراضية المحيطية بالسيارة
+        let r = 0.12, g = 0.15, b = 0.20; 
+
+        // بقعة ضوء علوية ناصعة (Softbox) تعطي بريقاً رائعاً على سقف وغطاء السيارة
+        if (y < 0.28 && x > 0.25 && x < 0.75) {
+            r = 2.8; g = 2.8; b = 2.8; 
+        }
+        // إضاءة أفقية جانبية نيون زرقاء خفيفة لإبراز المنحنيات الديناميكية للمجسم
+        if (x > 0.88 || x < 0.12) {
+            r = 0.1; g = 0.4; b = 1.6;
+        }
+
+        const stride = i * 3;
+        data[stride] = r;
+        data[stride + 1] = g;
+        data[stride + 2] = b;
+    }
+
+    // بناء التكستشر بصيغة RGBA وبأعلى جودة لمعالجة تدرجات الضوء
+    const texture = new THREE.DataTexture(data, width, height, THREE.RGBAFormat, THREE.FloatType);
+    texture.needsUpdate = true;
+    return texture;
+}
+
 function init3DScene() {
     scene = new THREE.Scene();
     scene.background = null; 
@@ -105,13 +146,33 @@ function init3DScene() {
     renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true, alpha: true, preserveDrawingBuffer: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(window.devicePixelRatio);
+    
+    // ✨ تفعيل معالجة الألوان والسينما المتقدمة لجعل الإضاءة والظلال حقيقية وعميقة
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2.5);
+    // 🌐 [دمج الـ HDRI]: إنشاء وتوليد الخريطة البيئية الذكية للاستوديو برمجياً لتجنب ثقل الملفات الخارجي
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+
+    const dataTexture = createGradientHDRI();
+    const envMap = pmremGenerator.fromEquirectangular(dataTexture).texture;
+    
+    scene.environment = envMap; // تطبيق الانعكاس تلقائياً على كافة مجسمات ومواد المشهد
+    dataTexture.dispose();
+    pmremGenerator.dispose();
+
+    // 💡 إضاءة موجهة إضافية وتكميلية لمنع اسوداد الزوايا المعاكسة
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.8);
-    dirLight1.position.set(5, 10, 7);
-    scene.add(dirLight1);
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    sunLight.position.set(10, 15, 10);
+    scene.add(sunLight);
+
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    rimLight.position.set(-10, 8, -10);
+    scene.add(rimLight);
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -122,7 +183,7 @@ function init3DScene() {
 
     function animate() {
         requestAnimationFrame(animate);
-        if (carModel) carModel.rotation.y += 0.003; 
+        if (carModel) carModel.rotation.y += 0.002; 
         controls.update();
         renderer.render(scene, camera);
     }
@@ -180,7 +241,6 @@ function onCanvasClick(event) {
 
         intersection.object.add(decalMesh);
         
-        // 💾 تخزين حدث الملصق للتراجع
         actionHistory.push({
             type: 'sticker',
             mesh: decalMesh,
@@ -189,7 +249,7 @@ function onCanvasClick(event) {
     }
 }
 
-// ↩️ دالة التراجع البرمجية المترجمة
+// ↩️ نظام التراجع المطور لدعم الألوان وأنواع الطلاء السابقة
 window.undoLastAction = () => {
     const lang = getActiveLang();
     if (actionHistory.length === 0) {
@@ -203,15 +263,24 @@ window.undoLastAction = () => {
         if (lastAction.parent && lastAction.mesh) {
             lastAction.parent.remove(lastAction.mesh);
         }
-    } else if (lastAction.type === 'color') {
+    } else if (lastAction.type === 'color' || lastAction.type === 'finish') {
         let previousColor = INITIAL_CAR_COLOR;
+        let previousRoughness = 0.2;
+        let previousMetalness = 0.5;
+
         for (let i = actionHistory.length - 1; i >= 0; i--) {
             if (actionHistory[i].type === 'color') {
                 previousColor = actionHistory[i].color;
-                break;
+            }
+            if (actionHistory[i].type === 'finish') {
+                previousRoughness = actionHistory[i].roughness;
+                previousMetalness = actionHistory[i].metalness;
             }
         }
-        applyColorToMeshes(previousColor, 0.2, 0.5);
+        
+        currentRoughness = previousRoughness;
+        currentMetalness = previousMetalness;
+        applyColorToMeshes(previousColor, previousRoughness, previousMetalness);
     }
 };
 
@@ -261,7 +330,6 @@ window.handleLogin = async (e) => {
     }
 };
 
-// ✅ الدالة المصححة والآمنة للتسجيل والتحقق ثنائي اللغة
 window.handleStrictRegister = async (e) => {
     e.preventDefault();
     
@@ -327,7 +395,6 @@ async function checkSessionFromServer() {
     } catch (e) {}
 }
 
-// تعديل دالة فك الحظر لتتوافق مع اللغتين ديناميكياً عند الفتح المباشر
 function unlockSimulator() {
     document.getElementById('authGate').style.display = 'none';
     document.getElementById('adCard').style.display = 'none';
@@ -362,23 +429,54 @@ function applyColorToMeshes(colorValue, roughness, metalness) {
 
             if (!shouldExcludeNormal && child.material) {
                 child.material = child.material.clone();
-                child.material.color.set(colorValue);
+                if (colorValue !== null) child.material.color.set(colorValue);
                 child.material.roughness = roughness;
                 child.material.metalness = metalness;
+                
+                // 🔥 إعطاء المادة الكثافة والقدرة الكاملة على عكس ظلال الـ HDRI المتولدة برمجياً لبريق مبهر
+                child.material.envMapIntensity = 1.6; 
                 child.material.needsUpdate = true;
             }
         }
     });
 }
 
-window.applyColor = (colorValue, roughness, metalness) => {
+window.applyColor = (colorValue) => {
     const lang = getActiveLang();
     if (!carModel) {
         alert(translations[lang].noCarAlert);
         return;
     }
     actionHistory.push({ type: 'color', color: colorValue });
-    applyColorToMeshes(colorValue, roughness, metalness);
+    applyColorToMeshes(colorValue, currentRoughness, currentMetalness);
+};
+
+// 👑 ميزة نوع الطلاء المتقدمة (مطفي / لامع / معدني) مع إدارة الحالة والدمج التام مع الـ HDRI
+window.changePaintFinish = (type) => {
+    const lang = getActiveLang();
+    if (!carModel) {
+        alert(lang === 'en' ? "❌ Please load a car model first!" : "❌ يرجى تحميل مجسم السيارة أولاً!");
+        return;
+    }
+
+    if (type === 'matte') {
+        currentRoughness = 0.95; // خشونة عالية تمنع كل لمعان عاكس
+        currentMetalness = 0.05; 
+    } else if (type === 'glossy') {
+        currentRoughness = 0.05; // ناعم جداً ليعكس ضوء سقف الاستوديو كالمرآة
+        currentMetalness = 0.25;
+    } else if (type === 'metallic') {
+        currentRoughness = 0.25;
+        currentMetalness = 0.95; // بريق معدني نيون قوي يعكس خطوط الضوء ببراعة خارقة
+    }
+
+    actionHistory.push({ type: 'finish', roughness: currentRoughness, metalness: currentMetalness });
+    applyColorToMeshes(null, currentRoughness, currentMetalness);
+
+    document.querySelectorAll('.btn-finish').forEach(btn => btn.classList.remove('active'));
+    if (type === 'matte') document.getElementById('btnMatte')?.classList.add('active');
+    if (type === 'glossy') document.getElementById('btnGlossy')?.classList.add('active');
+    if (type === 'metallic') document.getElementById('btnMetallic')?.classList.add('active');
 };
 
 window.applyLogoSticker = (event) => {
@@ -461,36 +559,73 @@ document.addEventListener("DOMContentLoaded", () => {
         carInputEl.addEventListener('input', (e) => {
             const value = e.target.value.toLowerCase().trim();
             if (carModelsMap[value]) {
-                new GLTFLoader().load(carModelsMap[value], (gltf) => {
-                    if (carModel) scene.remove(carModel);
-                    carModel = gltf.scene;
+                
+                const preloader = document.getElementById('preloader3D');
+                const progressBar = document.getElementById('progressBar');
+                const progressText = document.getElementById('progressText');
+                const loaderTitle = document.getElementById('loaderTitle');
+                const loaderSubText = document.getElementById('loaderSubText');
+                const lang = getActiveLang();
 
-                    const box = new THREE.Box3().setFromObject(carModel);
-                    const size = box.getSize(new THREE.Vector3());
-                    const center = box.getCenter(new THREE.Vector3());
+                if (preloader) preloader.style.display = 'flex';
+                if (progressBar) progressBar.style.width = '0%';
+                if (progressText) progressText.innerText = '0%';
+                if (loaderTitle) loaderTitle.innerText = translations[lang].loaderTitle;
+                if (loaderSubText) loaderSubText.innerText = translations[lang].loaderSubText;
 
-                    carModel.position.x += (carModel.position.x - center.x);
-                    carModel.position.y += (carModel.position.y - center.y);
-                    carModel.position.z += (carModel.position.z - center.z);
+                new GLTFLoader().load(
+                    carModelsMap[value], 
+                    
+                    (gltf) => {
+                        if (carModel) scene.remove(carModel);
+                        carModel = gltf.scene;
 
-                    const maxDimension = Math.max(size.x, size.y, size.z);
-                    if (maxDimension > 0) {
-                        carModel.scale.setScalar(3.8 / maxDimension);
-                    }
+                        const box = new THREE.Box3().setFromObject(carModel);
+                        const size = box.getSize(new THREE.Vector3());
+                        const center = box.getCenter(new THREE.Vector3());
 
-                    actionHistory = []; 
+                        carModel.position.x += (carModel.position.x - center.x);
+                        carModel.position.y += (carModel.position.y - center.y);
+                        carModel.position.z += (carModel.position.z - center.z);
 
-                    carModel.traverse((child) => {
-                        if (child.isMesh) {
-                            child.material.color.setHex(INITIAL_CAR_COLOR);
-                            child.material.roughness = 0.2;
-                            child.material.metalness = 0.5;
+                        const maxDimension = Math.max(size.x, size.y, size.z);
+                        if (maxDimension > 0) {
+                            carModel.scale.setScalar(3.8 / maxDimension);
                         }
-                    });
 
-                    scene.add(carModel);
-                    document.getElementById('placeholderText').style.display = "none";
-                });
+                        actionHistory = []; 
+
+                        carModel.traverse((child) => {
+                            if (child.isMesh) {
+                                child.material.color.setHex(INITIAL_CAR_COLOR);
+                                child.material.roughness = currentRoughness;
+                                child.material.metalness = currentMetalness;
+                                
+                                // تفعيل التقاط الانعكاس فوري عند اكتمال جلب السيارة
+                                child.material.envMapIntensity = 1.6;
+                                child.material.needsUpdate = true;
+                            }
+                        });
+
+                        scene.add(carModel);
+                        document.getElementById('placeholderText').style.display = "none";
+                        
+                        if (preloader) preloader.style.display = 'none';
+                    },
+                    
+                    (xhr) => {
+                        if (xhr.total > 0) {
+                            const percentComplete = Math.round((xhr.loaded / xhr.total) * 100);
+                            if (progressBar) progressBar.style.width = percentComplete + '%';
+                            if (progressText) progressText.innerText = percentComplete + '%';
+                        }
+                    },
+                    
+                    (error) => {
+                        console.error('حدث خطأ أثناء تحميل مجسم الـ 3D:', error);
+                        if (preloader) preloader.style.display = 'none';
+                    }
+                );
             }
         });
     }

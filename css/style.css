@@ -496,3 +496,111 @@ body, .auth-panel, .controls-sidebar, .display-zone, .design-card {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 242, 254, 0.15);
 }
+/* خلفية الشاشة كاملة وتأثير الزجاج الضبابي */
+.preloader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.85); /* لون داكن احترافي */
+    backdrop-filter: blur(10px); /* ضبابية مذهلة للوراء */
+    z-index: 9999; /* تضمن ظهورها فوق كل شيء */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.4s ease;
+}
+
+.loader-content {
+    text-align: center;
+    color: #ffffff;
+    font-family: sans-serif;
+}
+
+/* حركة دوران الترس الميكانيكي */
+.spinner-gear {
+    width: 60px;
+    height: 60px;
+    border: 5px dashed #38bdf8; /* لون نيون أزرق */
+    border-radius: 50%;
+    margin: 0 auto 20px auto;
+    animation: spinGear 2s linear infinite;
+}
+
+@keyframes spinGear {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* حاوية شريط التقدم */
+.progress-container {
+    width: 280px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin: 15px auto 5px auto;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* الشريط النشط */
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #38bdf8, #818cf8); /* تدرج لوني احترافي */
+    box-shadow: 0 0 10px #38bdf8;
+    border-radius: 10px;
+    transition: width 0.1s ease;
+}
+
+#progressText {
+    font-weight: bold;
+    color: #38bdf8;
+    font-size: 14px;
+}
+.paint-finish-section {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.paint-finish-section h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #9ca3af;
+}
+
+.finish-buttons-group {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-finish {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.6);
+    color: #9ca3af;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-finish:hover {
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+    border-color: #38bdf8;
+}
+
+/* الزر النشط حالياً */
+.btn-finish.active {
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+}

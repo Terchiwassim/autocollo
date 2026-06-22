@@ -9,7 +9,18 @@
 </head>
 
 <body>
-
+<div id="preloader3D" class="preloader-overlay" style="display: none;">
+    <div class="loader-content">
+        <div class="spinner-gear"></div>
+        <h3 id="loaderTitle" data-ar="⏳ جاري تجهيز الورشة..." data-en="⏳ Preparing Workshop...">⏳ جاري تجهيز الورشة...</h3>
+        <p id="loaderSubText" data-ar="يرجى الانتظار، جاري تحميل مجسم السيارة 3D..." data-en="Please wait, loading 3D car model...">يرجى الانتظار، جاري تحميل مجسم السيارة 3D...</p>
+        
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <span id="progressText">0%</span>
+    </div>
+</div>
     <div class="top-nav">
         <h2 class="brand-logo">AutoCollo DZ 👑</h2>
         <span class="status-badge" id="securityBadge" data-ar="🔒 يرجى تسجيل الدخول للوصول للمحاكي" data-en="🔒 Please login to access the simulator">🔒 يرجى تسجيل الدخول للوصول للمحاكي</span>
@@ -25,7 +36,7 @@
         </div>
     </div>
 
-    <div class="middle-container">
+    <div class="middle-container" >
 
         <div class="ad-card-wrapper" id="adCard">
             <div class="ad-card">
@@ -93,6 +104,20 @@
                             <span id="txtCustomColorDesc" style="font-size: 11px; color: #bdb292;" data-ar="اختر لونك اللامحدود" data-en="Choose your unlimited color">اختر لونك اللامحدود</span>
                         </div>
                     </div>
+                    <div class="paint-finish-section">
+    <h4 data-ar="✨ نوع الطلاء" data-en="✨ Paint Finish">✨ نوع الطلاء</h4>
+    <div class="finish-buttons-group">
+        <button type="button" class="btn-finish active" id="btnGlossy" onclick="changePaintFinish('glossy')">
+            <span data-ar="✨ لامع" data-en="✨ Glossy">✨ لامع</span>
+        </button>
+        <button type="button" class="btn-finish" id="btnMatte" onclick="changePaintFinish('matte')">
+            <span data-ar="🌑 مطفي" data-en="🌑 Matte">🌑 مطفي</span>
+        </button>
+        <button type="button" class="btn-finish" id="btnMetallic" onclick="changePaintFinish('metallic')">
+            <span data-ar="💿 معدني" data-en="💿 Metallic">💿 معدني</span>
+        </button>
+    </div>
+</div>
 
                     <label id="lblSticker" style="margin-top: 18px;" data-ar="🏢 إدراج شعار أو لوغو مخصص (Sticker PNG):" data-en="🏢 Insert Custom Logo/Sticker (Sticker PNG):">🏢 إدراج شعار أو لوغو مخصص (Sticker PNG):</label>
                     <div class="upload-picker-zone" style="margin-top: 5px; background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px; border: 1px dashed #10b981;">
