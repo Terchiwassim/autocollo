@@ -17,10 +17,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- إعدادات قاعدة بيانات SQLite ---
-DATABASE_URL = "sqlite:///./database.db"
+# --- إعدادات قاعدة بيانات PostgreSQL الذكية ---
+# يقوم بقراءة الرابط من سيرفر رندر، وإذا لم يجده (أثناء التشغيل المحلي مثلاً) يعود تلقائياً لـ SQLite مؤقتاً
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    # Render يعطي أحياناً روابط تبدأ بـ postgres:// والـ SQLAlchemy الحديث يتطلب postgresql://
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+if not DATABASE_URL:
+    DATABASE_URL = "sqlite:///./database.db"
+
+# إعداد الـ Engine بناءً على نوع قاعدة البيانات
+if "sqlite" in DATABASE_URL:
+    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+else:
+    engine = create_engine(DATABASE_URL)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -50,6 +63,7 @@ class DesignModel(Base):
     owner = relationship("UserModel", back_populates="designs")
 
 
+# إنشاء الجداول تلقائياً في الـ PostgreSQL عند تشغيل السيرفر لأول مرة
 Base.metadata.create_all(bind=engine)
 
 
@@ -82,7 +96,7 @@ def get_db():
 
 @app.get("/")
 def home():
-    return {"message": "AutoCollo DZ API is running successfully!"}
+    return {"message": "AutoCollo DZ API with PostgreSQL is running successfully!"}
 
 @app.post("/register-secure")
 def register_secure(user_data: UserRegisterSchema, db: Session = Depends(get_db)):
@@ -148,7 +162,6 @@ def delete_user_design(design_id: int, db: Session = Depends(get_db)):
 
 @app.get("/admin/users")
 def get_all_users(db: Session = Depends(get_db)):
-    # ✅ تم التعديل هنا ليعيد قائمة المستخدمين مباشرة كمصفوفة لتتوافق مع الفرونت إند وتظهر البيانات فوراً
     return db.query(UserModel).all()
 
 @app.post("/admin/activate")
@@ -170,13 +183,13 @@ def deactivate_user(data: ActivateSchema, db: Session = Depends(get_db)):
     return {"message": f"تم إلغاء تفعيل حساب {data.email}."}
 
 @app.delete("/admin/delete")
-def delete_user(data: ActivateSchema, db: Session = Depends(get_db)):
-    user = db.query(UserModel).filter(UserModel.email == data.email).first()
+def delete_user(email: str, db: Session = Depends(get_db)):
+    user = db.query(UserModel).filter(UserModel.email == email).first()
     if not user:
         raise HTTPException(status_code=404, detail="الحساب غير موجود")
     db.delete(user)
     db.commit()
-    return {"message": f"تم حذف حساب {data.email} نهائياً."}
+    return {"message": f"تم حذف حساب {email} نهائياً."}
 
 
 if __name__ == "__main__":
