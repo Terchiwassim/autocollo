@@ -29,6 +29,7 @@ function getGalleryLang() {
 
 document.addEventListener("DOMContentLoaded", () => {
     loadUserGallery();
+    initGalleryThemeAndLang();
 });
 
 // ↩️ دالة العودة خطوة واحدة إلى الخلف
@@ -40,6 +41,8 @@ window.goBackStep = goBackStep;
 // دالة جلب التصاميم المحفوظة من سيرفر البايثون وعرضها كصور ثابتة فقط
 async function loadUserGallery() {
     const grid = document.getElementById("galleryGrid");
+    if (!grid) return; // حماية في حال عدم وجود العنصر بالمشهد الحالي
+    
     const userEmail = localStorage.getItem('user_strict_email');
     const lang = getGalleryLang();
 
@@ -65,19 +68,26 @@ async function loadUserGallery() {
             const card = document.createElement("div");
             card.className = "design-card";
 
+            // 💡 أسلوب آمن لتمرير نصوص أسماء السيارات لمنع ثغرات الـ XSS عند جلبها من قاعدة البيانات
             card.innerHTML = `
                 <div class="card-glass-overlay"></div>
-                <button class="btn-delete" onclick="deleteDesign(${design.id}, event)">${galleryTranslations[lang].deleteBtn}</button>
+                <button class="btn-delete" id="btn-del-${design.id}">${galleryTranslations[lang].deleteBtn}</button>
                 
                 <div class="card-preview-zone">
-                    <img class="design-img" src="${design.image_url}" alt="${design.car_name}">
+                    <img class="design-img" src="${design.image_url}" alt="">
                 </div>
                 
                 <div class="design-info">
-                    <h4 class="design-car-name">👑 ${design.car_name}</h4>
+                    <h4 class="design-car-name">👑 <span id="car-name-${design.id}"></span></h4>
                 </div>
             `;
             grid.appendChild(card);
+
+            // تعيين النصوص بشكل آمن وحقن حدث الضغط بدون مشاكل Inline JavaScript
+            document.getElementById(`car-name-${design.id}`).innerText = design.car_name;
+            document.getElementById(`btn-del-${design.id}`).addEventListener('click', (e) => {
+                window.deleteDesign(design.id, e);
+            });
         });
 
     } catch (err) {
@@ -88,7 +98,7 @@ async function loadUserGallery() {
 
 // 🗑️ دالة حذف التصميم وإرسال الطلب للباك إند
 async function deleteDesign(designId, event) {
-    event.stopPropagation(); // منع انتشار الحدث
+    if (event) event.stopPropagation(); 
     const lang = getGalleryLang();
     
     if (!confirm(galleryTranslations[lang].deleteConfirm)) return;
@@ -113,11 +123,11 @@ async function deleteDesign(designId, event) {
 // ربط دالة الحذف بالـ Window لتكون متاحة للـ HTML
 window.deleteDesign = deleteDesign;
 
-// --- 🌗 إعدادات الـ Dark & Light Mode الذكية الخاصة بالصفحة ---
-document.addEventListener("DOMContentLoaded", () => {
+// --- 🌗 تهيئة إعدادات المظهر واللغة بشكل منظم ومنفصل ---
+function initGalleryThemeAndLang() {
     const themeToggle = document.getElementById("themeToggle");
-    
     const currentTheme = localStorage.getItem("theme");
+    
     if (currentTheme === "light") {
         document.body.classList.add("light-mode");
     }
@@ -130,13 +140,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 🌐 الاستماع لزر تبديل اللغة إذا كان متواجد في صفحة المعرض لتحديث الكروت فوراً
+    // 🌐 تحديث فوري عند تغير اللغة
     const langToggleBtn = document.getElementById('langToggle');
     if (langToggleBtn) {
         langToggleBtn.addEventListener('click', () => {
             setTimeout(() => {
-                loadUserGallery(); // إعادة بناء المعرض باللغة الجديدة فوراً
+                loadUserGallery(); 
             }, 50);
         });
     }
-});
+}

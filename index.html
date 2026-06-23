@@ -21,12 +21,12 @@
         <span id="progressText">0%</span>
     </div>
 </div>
+
     <div class="top-nav">
         <h2 class="brand-logo">AutoCollo DZ 👑</h2>
         <span class="status-badge" id="securityBadge" data-ar="🔒 يرجى تسجيل الدخول للوصول للمحاكي" data-en="🔒 Please login to access the simulator">🔒 يرجى تسجيل الدخول للوصول للمحاكي</span>
         
         <div style="display: flex; gap: 10px; align-items: center;">
-            <!-- زر تحويل اللغة -->
             <button id="langToggle" onclick="toggleLanguage()" style="background: var(--primary, #38bdf8); border: none; color: white; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
                 🌐 English
             </button>
@@ -60,10 +60,11 @@
                 <button type="submit" class="btn-submit-gate" id="btnLoginText" data-ar="دخول للمحاكي" data-en="Enter Simulator">دخول للمحاكي</button>
             </form>
 
-            <form id="registerForm" style="display: none;">
-                <div class="rip-box" id="ripBoxText">
-                    <span data-ar="تفعيل الحساب بـ 2000 دج عبر Baridi Mob (RIP):" data-en="Activate account for 2000 DZD via Baridi Mob (RIP):">تفعيل الحساب بـ 2000 دج عبر Baridi Mob (RIP):</span>
-                    <strong>007999990001234567 89</strong>
+            <form id="registerForm" style="display: none;" onsubmit="handleRegister(event)">
+                <div class="rip-box" id="ripBoxText" 
+                     data-ar="تفعيل الحساب بـ 2000 دج عبر Baridi Mob (RIP): <br><strong>007999990001234567 89</strong>" 
+                     data-en="Activate account for 2000 DZD via Baridi Mob (RIP): <br><strong>007999990001234567 89</strong>">
+                    تفعيل الحساب بـ 2000 دج عبر Baridi Mob (RIP): <br><strong>007999990001234567 89</strong>
                 </div>
 
                 <input type="text" id="regName" placeholder="الاسم الكامل" required data-placeholder-ar="الاسم الكامل" data-placeholder-en="Full Name">
@@ -104,20 +105,21 @@
                             <span id="txtCustomColorDesc" style="font-size: 11px; color: #bdb292;" data-ar="اختر لونك اللامحدود" data-en="Choose your unlimited color">اختر لونك اللامحدود</span>
                         </div>
                     </div>
+
                     <div class="paint-finish-section">
-    <h4 data-ar="✨ نوع الطلاء" data-en="✨ Paint Finish">✨ نوع الطلاء</h4>
-    <div class="finish-buttons-group">
-        <button type="button" class="btn-finish active" id="btnGlossy" onclick="changePaintFinish('glossy')">
-            <span data-ar="✨ لامع" data-en="✨ Glossy">✨ لامع</span>
-        </button>
-        <button type="button" class="btn-finish" id="btnMatte" onclick="changePaintFinish('matte')">
-            <span data-ar="🌑 مطفي" data-en="🌑 Matte">🌑 مطفي</span>
-        </button>
-        <button type="button" class="btn-finish" id="btnMetallic" onclick="changePaintFinish('metallic')">
-            <span data-ar="💿 معدني" data-en="💿 Metallic">💿 معدني</span>
-        </button>
-    </div>
-</div>
+                        <h4 data-ar="✨ نوع الطلاء" data-en="✨ Paint Finish">✨ نوع الطلاء</h4>
+                        <div class="finish-buttons-group">
+                            <button type="button" class="btn-finish active" id="btnGlossy" onclick="changePaintFinish('glossy')">
+                                <span data-ar="✨ لامع" data-en="✨ Glossy">✨ لامع</span>
+                            </button>
+                            <button type="button" class="btn-finish" id="btnMatte" onclick="changePaintFinish('matte')">
+                                <span data-ar="🌑 مطفي" data-en="🌑 Matte">🌑 مطفي</span>
+                            </button>
+                            <button type="button" class="btn-finish" id="btnMetallic" onclick="changePaintFinish('metallic')">
+                                <span data-ar="💿 معدني" data-en="💿 Metallic">💿 معدني</span>
+                            </button>
+                        </div>
+                    </div>
 
                     <label id="lblSticker" style="margin-top: 18px;" data-ar="🏢 إدراج شعار أو لوغو مخصص (Sticker PNG):" data-en="🏢 Insert Custom Logo/Sticker (Sticker PNG):">🏢 إدراج شعار أو لوغو مخصص (Sticker PNG):</label>
                     <div class="upload-picker-zone" style="margin-top: 5px; background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px; border: 1px dashed #10b981;">
@@ -152,7 +154,7 @@
     <div class="bottom-footer" id="mainFooter">
         <p id="footerDevTitle" data-ar="💡 تم تطوير المنصة بواسطة مبرمجي المشروع:" data-en="💡 Platform developed by project programmers:">💡 تم تطوير المنصة بواسطة مبرمجي المشروع:</p>
         <div class="team-links">
-            <a href="https://www.facebook.com/fares.nedjma.406556" class="developer-tag" target="_blank" data-ar="👑 مارس (Nedjma Fares)" data-en="👑 Fares (Nedjma Fares)">👑 فارس (Nedjma Fares)</a>
+            <a href="https://www.facebook.com/fares.nedjma.406556" class="developer-tag" target="_blank" data-ar="👑 فارس (Nedjma Fares)" data-en="👑 Fares (Nedjma Fares)">👑 فارس (Nedjma Fares)</a>
             <a href="https://www.facebook.com/profile.php?id=61580760117723"  class="developer-tag" target="_blank" data-ar="👑 وسيم (Terchi Wassim abdlhadi)" data-en="👑 Wassim (Terchi Wassim abdlhadi)">👑 وسيم (Terchi Wassim abdlhadi)</a>
             <a href="https://www.facebook.com/lakhneche.mohammed" class="developer-tag" target="_blank" data-ar="👑 محمد (Lakhneche mohamed hocine)" data-en="👑 Mohamed (Lakhneche mohamed hocine)">👑 محمد (Lakhneche mohamed hocine)</a>
             <a href="https://www.facebook.com/saw.khouel" class="developer-tag" target="_blank" data-ar="👑 خالد (Khouiel Kaled)" data-en="👑 Khaled (Khouiel Kaled)">👑 خالد (Khouiel Kaled)</a>
@@ -166,9 +168,7 @@
     </script>
     <script type="module" src="js/main.js"></script>
 
-    <!-- 🌐 سكريبت الترجمة المطور لحفظ لغة المستخدم وربطها مع القالوري -->
     <script>
-        // دالة تطبيق اللغة على العناصر بالاعتماد على خيار (ar أو en)
         function applyLanguage(lang) {
             const htmlTag = document.getElementById('mainHtml');
             const langBtn = document.getElementById('langToggle');
@@ -183,9 +183,9 @@
                 if(langBtn) langBtn.innerText = "🌐 English";
             }
 
-            // ترجمة النصوص الحاملة للوسوم الافتراضية
+            // ترجمة النصوص العامة (تم تعديلها لتدعم الـ HTML الداخلي من أجل وسوم الـ strong والـ br في كود الـ RIP)
             document.querySelectorAll('[data-ar]').forEach(element => {
-                element.innerText = element.getAttribute(`data-${lang}`);
+                element.innerHTML = element.getAttribute(`data-${lang}`);
             });
 
             // ترجمة الـ Placeholders داخل الحقول
@@ -194,16 +194,14 @@
             });
         }
 
-        // دالة الضغط على الزر لعكس اللغة وحفظها
         function toggleLanguage() {
             let savedLang = localStorage.getItem('preferredLang') || 'ar';
             let newLang = savedLang === 'ar' ? 'en' : 'ar';
             
-            localStorage.setItem('preferredLang', newLang); // حفظ الخيار الجديد في ذاكرة المتصفح
+            localStorage.setItem('preferredLang', newLang);
             applyLanguage(newLang);
         }
 
-        // عند تحميل الصفحة مباشرة: افحص هل توجد لغة محفوظة مسبقاً وطبقها فوراً
         document.addEventListener("DOMContentLoaded", () => {
             let initialLang = localStorage.getItem('preferredLang') || 'ar';
             applyLanguage(initialLang);

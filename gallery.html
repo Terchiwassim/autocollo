@@ -33,6 +33,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         /* شريط التنقل العلوي الفاخر */
@@ -139,7 +140,7 @@
             font-size: 32px;
             font-weight: 800;
             margin: 0;
-            background: linear-gradient(135deg, #d9bdbd, var(--text-secondary));
+            background: linear-gradient(135deg, #fff, var(--text-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -171,7 +172,6 @@
             box-shadow: 0 20px 40px rgba(0, 242, 254, 0.15);
         }
 
-        /* حاوية الصورة وعزل زر الحذف */
         .card-preview-zone {
             position: relative;
             width: 100%;
@@ -301,7 +301,6 @@
             border-color: var(--neon-red);
         }
 
-        /* منطقة المحرك الرسومي داخل النافذة */
         .modal-3d-zone {
             width: 100%;
             height: 550px;
@@ -315,7 +314,6 @@
             display: block;
         }
 
-        /* تفاصيل أسفل المودال المطور */
         .modal-details-footer {
             padding: 25px 35px;
             background: #111827;
@@ -336,10 +334,39 @@
             border: 1px dashed var(--border-glass);
         }
 
-        /* --- 🚗 تنسيقات إضافية خاصة بكروت المعرض والنافذة ثلاثية الأبعاد في الوضع الفضي --- */
+        /* --- الوضع المضيء الفضي (Light Mode) --- */
+        body.light-mode {
+            --bg-main: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-glass: rgba(148, 163, 184, 0.4);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.06) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
+        }
+
+        body.light-mode .top-nav {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+        }
+
+        body.light-mode .brand-logo {
+            background: linear-gradient(135deg, #0f172a 30%, #0284c7);
+            -webkit-background-clip: text;
+        }
+
+        body.light-mode .gallery-actions-nav {
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        body.light-mode .btn-back-step {
+            background: #ffffff;
+            color: #0f172a;
+            border-color: #cbd5e1;
+        }
+
         body.light-mode .design-card {
-            background: rgba(255, 255, 255, 0.65) !important;
-            border: 1px solid rgba(148, 163, 184, 0.4) !important;
+            background: rgba(255, 255, 255, 0.75) !important;
             box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04) !important;
         }
 
@@ -352,26 +379,28 @@
             color: #0f172a !important;
         }
 
-        body.light-mode #previewModal {
-            background: rgba(15, 23, 42, 0.4) !important;
+        body.light-mode .preview-modal {
+            background: rgba(15, 23, 42, 0.6) !important;
         }
 
-        body.light-mode #previewModal .modal-content {
-            background: #e2e8f0 !important;
+        body.light-mode .modal-content {
+            background: #f8fafc !important;
             border: 1px solid rgba(148, 163, 184, 0.6) !important;
-            color: #0f172a !important;
-            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.2) !important;
+            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.15) !important;
         }
 
-        body.light-mode .modal-footer-info {
-            background: rgba(255, 255, 255, 0.5) !important;
-            border-top: 1px solid rgba(148, 163, 184, 0.4) !important;
-            color: #475569 !important;
+        body.light-mode .modal-3d-zone {
+            background: radial-gradient(circle, #f1f5f9 0%, #cbd5e1 100%);
+        }
+
+        body.light-mode .modal-details-footer {
+            background: #ffffff !important;
+            border-top: 1px solid rgba(148, 163, 184, 0.3) !important;
         }
     </style>
 </head>
 
-<body class="">
+<body>
 
     <div class="top-nav">
         <h2 class="brand-logo">
@@ -381,7 +410,6 @@
         <span class="status-badge" id="navBadge" style="background: rgba(16, 185, 129, 0.08); color: var(--neon-green);" data-ar="● لوحة تحكم مصممي الـ 3D نشطة" data-en="● 3D Designers Control Panel Active">● لوحة تحكم مصممي الـ 3D نشطة</span>
         
         <div style="display: flex; gap: 10px; align-items: center;">
-            <!-- زر تبديل لغة المعرض والتحكم الفوري -->
             <button id="langToggle" onclick="toggleGalleryLanguage()" style="background: var(--neon-cyan, #00f2fe); border: none; color: #090d16; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
                 🌐 English
             </button>
@@ -400,7 +428,6 @@
         </div>
         
         <div class="designs-grid" id="galleryGrid">
-            <!-- سيتم استبدال هذا النص ديناميكياً عبر الجافا سكريبت بناءً على اللغة المفضلة -->
             <div class="no-data" id="initialLoadingText" data-ar="⏳ جاري الاتصال بخوادم الـ 3D جلب تصاميمك المخصصة..." data-en="⏳ Connecting to 3D servers to fetch your custom designs...">⏳ جاري الاتصال بخوادم الـ 3D جلب تصاميمك المخصصة...</div>
         </div>
     </div>
@@ -408,9 +435,7 @@
     <div class="preview-modal" id="previewModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeDesignModal()">✕</button>
-            
             <div class="modal-3d-zone" id="modal3dZone"></div>
-
             <div class="modal-details-footer">
                 <div>
                     <h3 id="modalCarName" style="color: var(--text-primary); margin: 0; font-size: 24px; font-weight: 800;" data-ar="اسم السيارة" data-en="Car Name">اسم السيارة</h3>
@@ -428,9 +453,8 @@
     </script>
     <script type="module" src="js/gallery.js"></script>
 
-    <!-- 🌐 نظام التحكم باللغات الفوري المرتبط بالصفحة الرئيسية والـ LocalStorage -->
-    <!-- 🌐 نظام التحكم باللغات الفوري المرتبط بالصفحة الرئيسية والـ LocalStorage -->
     <script>
+        // --- 🌐 نظام التحكم باللغات الفوري ---
         function applyGalleryLanguage(lang) {
             const htmlTag = document.getElementById('mainHtml');
             const langBtn = document.getElementById('langToggle');
@@ -445,12 +469,10 @@
                 if (langBtn) langBtn.innerText = "🌐 English";
             }
 
-            // 1. ترجمة الكلمات الثابتة التي تملك وسم الـ data
             document.querySelectorAll('[data-ar]').forEach(element => {
                 element.innerText = element.getAttribute(`data-${lang}`);
             });
 
-            // 2. معالجة نصوص شبكة كروت الـ 3D المضافة ديناميكياً
             document.querySelectorAll('.badge-3d-live').forEach(badge => {
                 badge.innerText = lang === 'en' ? 'Live 3D' : 'مباشر 3D';
             });
@@ -459,34 +481,54 @@
                 btn.innerText = lang === 'en' ? '🗑️ Delete' : '🗑️ حذف التصميم';
             });
 
-            // 3. 🚨 حل مشكلة نص "المرآب فارغ" عند غياب البيانات
             const noDataBox = document.querySelector('.no-data');
             if (noDataBox) {
-                // نتحقق مما إذا كان النص الحالي هو نص "المرآب فارغ" (سواء بالعربي أو الإنجليزي) لترجمته فوراً
                 const emptyMsgAr = "مرآبك فارغ حالياً! قم بتعديل سيارة في الورشة واضغط على زر الحفظ لتظهر هنا";
                 const emptyMsgEn = "Your garage is currently empty! Customize a car in the workshop and press the save button to see it here.";
-                
                 if (noDataBox.innerText.includes("مرآبك فارغ") || noDataBox.innerText.includes("Your garage is currently empty")) {
                     noDataBox.innerText = lang === 'en' ? emptyMsgEn : emptyMsgAr;
                 }
             }
         }
 
-        // دالة تبديل اللغة عند ضغط المستخدم على الزر مباشرة داخل المعرض
         function toggleGalleryLanguage() {
             let currentLang = localStorage.getItem('preferredLang') || 'ar';
             let nextLang = currentLang === 'ar' ? 'en' : 'ar';
-            
-            localStorage.setItem('preferredLang', nextLang); // تحديث القيمة بذاكرة المتصفح
+            localStorage.setItem('preferredLang', nextLang);
             applyGalleryLanguage(nextLang);
         }
 
-        // تفعيل الفحص الفوري فور دخول المستخدم للمعرض
+        // --- 🌓 نظام تبديل الوضع (Dark / Light Theme) المطور ---
+        const themeToggleBtn = document.getElementById('themeToggle');
+        
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                document.body.classList.add('light-mode');
+            } else {
+                document.body.classList.remove('light-mode');
+            }
+        }
+
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                let currentTheme = localStorage.getItem('galleryTheme') || 'dark';
+                let nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                localStorage.setItem('galleryTheme', nextTheme);
+                applyTheme(nextTheme);
+            });
+        }
+
+        // تشغيل التهيئة والتحقق عند تحميل المستند
         document.addEventListener("DOMContentLoaded", () => {
+            // 1. تطبيق اللغات
             let activeLang = localStorage.getItem('preferredLang') || 'ar';
             applyGalleryLanguage(activeLang);
 
-            // مراقبة التغييرات داخل صندوق المعرض (في حال تأخر ملف الـ JS في حقن نص "المرآب فارغ")
+            // 2. تطبيق الثيم المحفوظ
+            let savedTheme = localStorage.getItem('galleryTheme') || 'dark';
+            applyTheme(savedTheme);
+
+            // مراقبة التغييرات الديناميكية للجدول لترجمة أي نصوص تحقن لاحقاً
             const gridObserver = new MutationObserver(() => {
                 let currentLang = localStorage.getItem('preferredLang') || 'ar';
                 applyGalleryLanguage(currentLang);
@@ -499,5 +541,4 @@
         });
     </script>
 </body>
-
 </html>

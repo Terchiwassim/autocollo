@@ -7,13 +7,16 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; margin: 0; }
         h1 { color: #38bdf8; border-bottom: 2px solid #334155; padding-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; }
-        th, td { padding: 12px 15px; text-align: right; border-bottom: 1px solid #334155; }
+        
+        /* جعل الجدول متجاوباً على الهواتف والشاشات الصغيرة */
+        .table-container { width: 100%; overflow-x: auto; margin-top: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        table { width: 100%; border-collapse: collapse; background: #1e293b; overflow: hidden; }
+        th, td { padding: 12px 15px; text-align: right; border-bottom: 1px solid #334155; white-space: nowrap; }
         th { background-color: #0284c7; color: white; }
         tr:hover { background-color: #334155; }
         
         /* تنسيق أزرار العمليات */
-        .btn-action { color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; font-size: 13px; }
+        .btn-action { color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; font-size: 13px; transition: background 0.2s; }
         .btn-activate { background: #10b981; }
         .btn-activate:hover { background: #059669; }
         .btn-deactivate { background: #f97316; }
@@ -31,70 +34,84 @@
     <h1> لوحة تحكم الأدمن  - إدارة تفعيلات بريدي موب</h1>
     <p>هنا تجد قائمة المستخدمين الذين سجلوا وقاموا بإدخال رقم المعاملة للتحقق:</p>
 
-    <table>
-        <thead>
-            <tr>
-                <th>الاسم الكامل</th>
-                <th>البريد الإلكتروني</th>
-                <th>رقم معاملة بريدي موب</th>
-                <th>الحالة الحالية</th>
-                <th>الإجراءات</th>
-            </tr>
-        </thead>
-        <tbody id="usersTableBody"></tbody>
-    </table>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>الاسم الكامل</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>رقم معاملة بريدي موب</th>
+                    <th>الحالة الحالية</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+        </table>
+    </div>
 
     <script>
-        // الرابط المباشر لسيرفر Render الخاص بك
         const API_BASE_URL = "https://autocollo-api.onrender.com";
 
-        // دالة لجلب المستخدمين من السيرفر وعرضهم في الجدول
+        // دالة لجلب المستخدمين من السيرفر وعرضهم في الجدول بأمان
         async function fetchUsers() {
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = "<tr><td colspan='5'>⏳ جاري جلب البيانات من السيرفر...</td></tr>";
 
             try {
                 const response = await fetch(`${API_BASE_URL}/admin/users`);
-                const users = await response.json();
+                if (!response.ok) throw new Error("فشل الاتصال");
                 
-                tbody.innerHTML = ""; // تنظيف الجدول
+                const users = await response.json();
+                tbody.innerHTML = ""; 
 
-                // ✅ التعديل هنا للتحقق من المصفوفة المباشرة
                 if(!users || users.length === 0) {
                     tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>❌ لا يوجد أي مستخدم مسجل حالياً في القاعدة.</td></tr>";
                     return;
                 }
 
-                // ✅ التعديل هنا للمرور على المصفوفة مباشرة
-                users.forEach(user => {
+                // بناء الجدول بأسلوب أمني يمنع ثغرات XSS
+                users.forEach((user, index) => {
                     const tr = document.createElement('tr');
                     
-                    // تحديد شكل الـ Badge على حسب الحالة
                     const statusClass = user.status === 'active' ? 'status-active' : 'status-pending';
                     const statusText = user.status === 'active' ? 'مفعّل ونشط' : 'قيد الانتظار';
 
-                    // شروط عرض الأزرار: التفعيل أو إلغاء التفعيل بناءً على الحالة الحالية
-                    let activationButton = "";
-                    if (user.status === 'pending') {
-                        activationButton = `<button class="btn-action btn-activate" onclick="activateUser('${user.email}')">✅ تفعيل</button>`;
-                    } else {
-                        activationButton = `<button class="btn-action btn-deactivate" onclick="deactivateUser('${user.email}')">⚠️ إلغاء التفعيل</button>`;
-                    }
-
-                    // زر الحذف يظهر دائماً لجميع الحسابات
-                    const deleteButton = `<button class="btn-action btn-delete" onclick="deleteUser('${user.email}')">🗑️ حذف</button>`;
-
+                    // تحضير خلايا الصف مع إعطائها معرفات فريدة لحقن البيانات نصياً لاحقاً
                     tr.innerHTML = `
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td style="color:#38bdf8; font-weight:bold; font-family:monospace;">${user.transaction_id}</td>
+                        <td id="user-name-${index}"></td>
+                        <td id="user-email-${index}"></td>
+                        <td id="user-tx-${index}" style="color:#38bdf8; font-weight:bold; font-family:monospace;"></td>
                         <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                        <td>
-                            ${activationButton}
-                            ${deleteButton}
-                        </td>
+                        <td id="user-actions-${index}"></td>
                     `;
                     tbody.appendChild(tr);
+
+                    // حقن النصوص بأمان تام كـ Text
+                    document.getElementById(`user-name-${index}`).textContent = user.name;
+                    document.getElementById(`user-email-${index}`).textContent = user.email;
+                    document.getElementById(`user-tx-${index}`).textContent = user.transaction_id;
+
+                    // بناء وحقن أزرار التحكم والعمليات ديناميكياً
+                    const actionsCell = document.getElementById(`user-actions-${index}`);
+                    
+                    const actBtn = document.createElement('button');
+                    actBtn.className = `btn-action ${user.status === 'pending' ? 'btn-activate' : 'btn-deactivate'}`;
+                    actBtn.textContent = user.status === 'pending' ? '✅ تفعيل' : '⚠️ إلغاء التفعيل';
+                    actBtn.addEventListener('click', () => {
+                        if (user.status === 'pending') {
+                            window.activateUser(user.email);
+                        } else {
+                            window.deactivateUser(user.email);
+                        }
+                    });
+                    
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'btn-action btn-delete';
+                    delBtn.textContent = '🗑️ حذف';
+                    delBtn.addEventListener('click', () => window.deleteUser(user.email));
+
+                    actionsCell.appendChild(actBtn);
+                    actionsCell.appendChild(delBtn);
                 });
 
             } catch (err) {
@@ -169,7 +186,7 @@
             }
         }
 
-        // ربط الدوال بنطاق الـ Window لتفادي مشاكل الـ Scoping مع الأزرار
+        // ربط الدوال بنطاق الـ Window
         window.activateUser = activateUser;
         window.deactivateUser = deactivateUser;
         window.deleteUser = deleteUser;

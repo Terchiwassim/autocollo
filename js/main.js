@@ -11,8 +11,8 @@ const mouse = new THREE.Vector2();
 // 🕒 نظام ذاكرة التراجع (Undo History) والمتغيرات الافتراضية للمواد
 let actionHistory = []; 
 const INITIAL_CAR_COLOR = 0x374151; 
-let currentRoughness = 0.2; // اللمعان الافتراضي للهيكل عند بدء التحميل
-let currentMetalness = 0.5; // الانعكاس المعدني الافتراضي للهيكل عند بدء التحميل
+let currentRoughness = 0.2; 
+let currentMetalness = 0.5; 
 
 // 🌐 قاموس الترجمة الفوري للنصوص البرمجية الديناميكية والتنبيهات وشاشات التحميل
 const translations = {
@@ -56,12 +56,10 @@ const translations = {
     }
 };
 
-// دالة مساعدة سريعة لجلب اللغة الحالية المحددة في المتصفح
 function getActiveLang() {
     return localStorage.getItem('preferredLang') || 'ar';
 }
 
-// 📢 إعلانات الورشات المحدثة ثنائية اللغة (تتبدل ديناميكياً)
 const workshopAds = [
     { 
         title_ar: "ورشة 'الأناقة' لتعديل سيارات الـ 3D", desc_ar: "📍 سطيف - صبغة مطفية وتغليف كامل وتعديل الهياكل",
@@ -94,7 +92,6 @@ function initAdSlider() {
     }, 4500);
 }
 
-// 🎨 دالة توليد صورة إضاءة استوديو متدرجة (Studio HDRI) برمجياً للحفاظ على سرعة الموقع
 function createGradientHDRI() {
     const width = 512;
     const height = 256;
@@ -105,14 +102,11 @@ function createGradientHDRI() {
         const y = Math.floor(i / width) / height;
         const x = (i % width) / width;
 
-        // لون الخلفية الانعكاسية الافتراضية المحيطية بالسيارة
         let r = 0.12, g = 0.15, b = 0.20; 
 
-        // بقعة ضوء علوية ناصعة (Softbox) تعطي بريقاً رائعاً على سقف وغطاء السيارة
         if (y < 0.28 && x > 0.25 && x < 0.75) {
             r = 2.8; g = 2.8; b = 2.8; 
         }
-        // إضاءة أفقية جانبية نيون زرقاء خفيفة لإبراز المنحنيات الديناميكية للمجسم
         if (x > 0.88 || x < 0.12) {
             r = 0.1; g = 0.4; b = 1.6;
         }
@@ -123,7 +117,6 @@ function createGradientHDRI() {
         data[stride + 2] = b;
     }
 
-    // بناء التكستشر بصيغة RGBA وبأعلى جودة لمعالجة تدرجات الضوء
     const texture = new THREE.DataTexture(data, width, height, THREE.RGBAFormat, THREE.FloatType);
     texture.needsUpdate = true;
     return texture;
@@ -147,22 +140,19 @@ function init3DScene() {
     renderer.setSize(width, height);
     renderer.setPixelRatio(window.devicePixelRatio);
     
-    // ✨ تفعيل معالجة الألوان والسينما المتقدمة لجعل الإضاءة والظلال حقيقية وعميقة
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
 
-    // 🌐 [دمج الـ HDRI]: إنشاء وتوليد الخريطة البيئية الذكية للاستوديو برمجياً لتجنب ثقل الملفات الخارجي
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
     pmremGenerator.compileEquirectangularShader();
 
     const dataTexture = createGradientHDRI();
     const envMap = pmremGenerator.fromEquirectangular(dataTexture).texture;
     
-    scene.environment = envMap; // تطبيق الانعكاس تلقائياً على كافة مجسمات ومواد المشهد
+    scene.environment = envMap; 
     dataTexture.dispose();
     pmremGenerator.dispose();
 
-    // 💡 إضاءة موجهة إضافية وتكميلية لمنع اسوداد الزوايا المعاكسة
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
@@ -249,7 +239,6 @@ function onCanvasClick(event) {
     }
 }
 
-// ↩️ نظام التراجع المطور لدعم الألوان وأنواع الطلاء السابقة
 window.undoLastAction = () => {
     const lang = getActiveLang();
     if (actionHistory.length === 0) {
@@ -433,7 +422,6 @@ function applyColorToMeshes(colorValue, roughness, metalness) {
                 child.material.roughness = roughness;
                 child.material.metalness = metalness;
                 
-                // 🔥 إعطاء المادة الكثافة والقدرة الكاملة على عكس ظلال الـ HDRI المتولدة برمجياً لبريق مبهر
                 child.material.envMapIntensity = 1.6; 
                 child.material.needsUpdate = true;
             }
@@ -451,7 +439,6 @@ window.applyColor = (colorValue) => {
     applyColorToMeshes(colorValue, currentRoughness, currentMetalness);
 };
 
-// 👑 ميزة نوع الطلاء المتقدمة (مطفي / لامع / معدني) مع إدارة الحالة والدمج التام مع الـ HDRI
 window.changePaintFinish = (type) => {
     const lang = getActiveLang();
     if (!carModel) {
@@ -460,14 +447,14 @@ window.changePaintFinish = (type) => {
     }
 
     if (type === 'matte') {
-        currentRoughness = 0.95; // خشونة عالية تمنع كل لمعان عاكس
+        currentRoughness = 0.95; 
         currentMetalness = 0.05; 
     } else if (type === 'glossy') {
-        currentRoughness = 0.05; // ناعم جداً ليعكس ضوء سقف الاستوديو كالمرآة
+        currentRoughness = 0.05; 
         currentMetalness = 0.25;
     } else if (type === 'metallic') {
         currentRoughness = 0.25;
-        currentMetalness = 0.95; // بريق معدني نيون قوي يعكس خطوط الضوء ببراعة خارقة
+        currentMetalness = 0.95; 
     }
 
     actionHistory.push({ type: 'finish', roughness: currentRoughness, metalness: currentMetalness });
@@ -601,7 +588,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                 child.material.roughness = currentRoughness;
                                 child.material.metalness = currentMetalness;
                                 
-                                // تفعيل التقاط الانعكاس فوري عند اكتمال جلب السيارة
                                 child.material.envMapIntensity = 1.6;
                                 child.material.needsUpdate = true;
                             }

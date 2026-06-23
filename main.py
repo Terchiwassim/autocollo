@@ -18,7 +18,6 @@ app.add_middleware(
 )
 
 # --- إعدادات قاعدة بيانات PostgreSQL الذكية ---
-# يقوم بقراءة الرابط من سيرفر رندر، وإذا لم يجده (أثناء التشغيل المحلي مثلاً) يعود تلقائياً لـ SQLite مؤقتاً
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
@@ -28,11 +27,17 @@ if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
 if not DATABASE_URL:
     DATABASE_URL = "sqlite:///./database.db"
 
-# إعداد الـ Engine بناءً على نوع قاعدة البيانات
+# 🛠️ [الإصلاح الفوري]: تعديل الـ Engine لحل مشكلة السيرفرات الخارجية (Render)
 if "sqlite" in DATABASE_URL:
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 else:
-    engine = create_engine(DATABASE_URL)
+    # نقوم برفع الـ pool_pre_ping لحماية السيرفر من الانهيار عند انقطاع الاتصال المؤقت بقاعدة البيانات الخارجية
+    engine = create_engine(
+        DATABASE_URL, 
+        pool_size=10, 
+        max_overflow=20, 
+        pool_pre_ping=True
+    )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -195,4 +200,5 @@ def delete_user(email: str, db: Session = Depends(get_db)):
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+    # 🛠️ [الإصلاح الثاني]: في السيرفر المباشر يفضل عدم تمرير نص "main:app" عند تفعيل الـ reload مع uvicorn لضمان البناء السليم
+    uvicorn.run(app, host="0.0.0.0", port=port)
